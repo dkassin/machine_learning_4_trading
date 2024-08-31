@@ -259,7 +259,7 @@ def test_code():
     """  		  	   		 	   		  		  		    	 		 		   		 		  
     Method to test your code  		  	   		 	   		  		  		    	 		 		   		 		  
     """  		  	  
-    win_prob = 0.4736  # set appropriately to the probability of a win  		  	   		 	   		  		  		    	 		 		   		 		  
+    win_prob = 0.4737  # set appropriately to the probability of a win  		  	   		 	   		  		  		    	 		 		   		 		  
     np.random.seed(gtid())  # do this only once  		  	   		 	   		  		  		    	 		 		   		 		  
     # print(get_spin_result(win_prob))  # test the roulette spin
     simple_simulator_10_episodes = simple_simulator(10, win_prob)
