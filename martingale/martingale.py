@@ -66,52 +66,52 @@ def get_spin_result(win_prob):
 
 def bach_betting_strategy(win_prob):
     episode_winnings = 0
-    winnings = [0]
+    winnings = np.zeros(1001)
     bet_amount = 1
 
-    for _ in range(1000):
+    for i in range(1, 1001):
         if episode_winnings >= 80:
-            winnings.append(episode_winnings)
+            winnings[i] = episode_winnings
         else:
             won = get_spin_result(win_prob)
             if won:
-                episode_winnings = episode_winnings + bet_amount
-                winnings.append(episode_winnings)
+                episode_winnings += bet_amount
+                winnings[i] = episode_winnings
                 bet_amount = 1
             else:
-                episode_winnings = episode_winnings - bet_amount
-                winnings.append(episode_winnings)
+                episode_winnings -= bet_amount
+                winnings[i] = episode_winnings
                 bet_amount =  bet_amount * 2
 
 
-    return np.array(winnings)
+    return winnings
 
 def realistic_betting_strategy(win_prob):
     episode_winnings = 0
-    winnings = [0]
+    winnings = np.zeros(1001)
     bet_amount = 1
-    bank_roll = 50
+    bank_roll = 256
 
-    for _ in range(1000):
-        if episode_winnings >= 80 or episode_winnings <= (-50):
-            winnings.append(episode_winnings)
+    for i in range(1, 1001):
+        if episode_winnings >= 80 or episode_winnings <= (-256):
+            winnings[i] = episode_winnings
         else:
             won = get_spin_result(win_prob)
             if won:
                 episode_winnings += bet_amount
                 bank_roll += bet_amount
-                winnings.append(episode_winnings)
+                winnings[i] = episode_winnings
                 bet_amount = 1
             else:
                 episode_winnings -= bet_amount
                 bank_roll -= bet_amount
-                winnings.append(episode_winnings)
+                winnings[i] = episode_winnings
                 if (bank_roll - (bet_amount*2)) > 0:
                     bet_amount =  bet_amount * 2
                 else:
                     bet_amount = bank_roll
 
-    return np.array(winnings)
+    return winnings
 
 def simple_simulator(number_of_episodes, win_prob):
     episodes = []
