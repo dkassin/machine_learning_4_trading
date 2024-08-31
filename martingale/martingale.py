@@ -27,7 +27,7 @@ GT ID: 904063414
 """  		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
 import numpy as np  		  	   		 	   		  		  		    	 		 		   		 		  
-		  	   		 	   		  		  		    	 		 		   		 		  
+import matplotlib.pyplot as plt		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
 def author():  		  	   		 	   		  		  		    	 		 		   		 		  
     """  		  	   		 	   		  		  		    	 		 		   		 		  
@@ -69,7 +69,7 @@ def bach_betting_strategy(win_prob):
     winnings = [0]
     bet_amount = 1
 
-    for _ in range(20):
+    for _ in range(1000):
         if episode_winnings >= 80:
             winnings.append(episode_winnings)
         else:
@@ -130,7 +130,7 @@ def simple_simulator(number_of_episodes, win_prob):
 
     stats_stack = np.stack([mean_values, median_values, std_values], axis = 0)
     final_array = np.concatenate([spin_array, stats_stack], axis = 0)
-    print(final_array)
+    return final_array
 
 def realistic_simulator(number_of_episodes, win_prob):
     episodes = []
@@ -149,19 +149,58 @@ def realistic_simulator(number_of_episodes, win_prob):
 
     stats_stack = np.stack([mean_values, median_values, std_values], axis = 0)
     final_array = np.concatenate([spin_array, stats_stack], axis = 0)
-    print(final_array)
+    return final_array
+
+def figure_1_plot(array):
+    episodes = array[:-3]
+    plt.figure(figsize=(10,6))
+    for i, episode in enumerate(episodes):
+        plt.plot(episode,label = f'Episode {i+1}')
+
+    plt.xlim(0, 300)
+    plt.ylim(-256, 100)
+
+    plt.xlabel('Spins')
+    plt.ylabel('Winnings')
+    plt.title('Simple Simulator, 10 Episodes Winnings Over Spins', fontsize=16)
+    plt.legend(loc=0, fontsize=12)
+    plt.savefig('images/simple_simulator_10_episodes_winnings_over_spins')
+
+def figure_2_plot(array):
+    mean_winnings = array[-3]
+    stdev_winnings = array[-1]
+
+    upper_bound = mean_winnings + stdev_winnings
+    lower_bound = mean_winnings - stdev_winnings
+
+    plt.figure(figsize=(10,6))
+
+    plt.plot(mean_winnings, label = 'Mean Episode Winnings', color = 'blue')
+    plt.plot(upper_bound, label = 'Standard Deviation Upper Bound', color = 'green', alpha=0.5)
+    plt.plot(lower_bound, label = 'Standard Deviation Lower Bound', color = 'red', alpha=0.5)
+
+    plt.xlim(0, 300)
+    plt.ylim(-256, 100)
+
+    plt.xlabel('Spins')
+    plt.ylabel('Winnings')
+    plt.title('Simple Simulator, Mean Winnings with Standard Deviation Bounds', fontsize=16)
+    plt.legend(loc=0, fontsize=12)
+    plt.savefig('images/simple_simulator_mean_winnings_with_standard_deviation_bounds')
 
 def test_code():  		  	   		 	   		  		  		    	 		 		   		 		  
     """  		  	   		 	   		  		  		    	 		 		   		 		  
     Method to test your code  		  	   		 	   		  		  		    	 		 		   		 		  
     """  		  	  
-    np.set_printoptions(linewidth=np.inf) 	
     win_prob = 0.4736  # set appropriately to the probability of a win  		  	   		 	   		  		  		    	 		 		   		 		  
     np.random.seed(gtid())  # do this only once  		  	   		 	   		  		  		    	 		 		   		 		  
     # print(get_spin_result(win_prob))  # test the roulette spin
-    # figure_1 = simple_simulator(10, win_prob)
-    # figure_2 = simple_simulator(1000, win_prob)
-    print(realistic_betting_strategy(win_prob))
+    figure_1 = simple_simulator(10, win_prob)
+    figure_1_plot(figure_1)
+    figure_2 = simple_simulator(1000, win_prob)
+    figure_2_plot(figure_2)
+    # print(realistic_betting_strategy(win_prob))
+    # figure_4 = realistic_simulator(1000, win_prob)
     # print(figure_1)
     # add your code here to implement the experiments  		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
