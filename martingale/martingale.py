@@ -188,6 +188,28 @@ def figure_2_plot(array):
     plt.legend(loc=0, fontsize=12)
     plt.savefig('images/simple_simulator_mean_winnings_with_standard_deviation_bounds')
 
+def figure_3_plot(array):
+    median_winnings = array[-2]
+    stdev_winnings = array[-1]
+
+    upper_bound = median_winnings + stdev_winnings
+    lower_bound = median_winnings - stdev_winnings
+
+    plt.figure(figsize=(10,6))
+
+    plt.plot(median_winnings, label = 'Median Episode Winnings', color = 'blue')
+    plt.plot(upper_bound, label = 'Standard Deviation Upper Bound', color = 'green', alpha=0.5)
+    plt.plot(lower_bound, label = 'Standard Deviation Lower Bound', color = 'red', alpha=0.5)
+
+    plt.xlim(0, 300)
+    plt.ylim(-256, 100)
+
+    plt.xlabel('Spins')
+    plt.ylabel('Winnings')
+    plt.title('Simple Simulator, Median Winnings with Standard Deviation Bounds', fontsize=16)
+    plt.legend(loc=0, fontsize=12)
+    plt.savefig('images/simple_simulator_median_winnings_with_standard_deviation_bounds')
+
 def test_code():  		  	   		 	   		  		  		    	 		 		   		 		  
     """  		  	   		 	   		  		  		    	 		 		   		 		  
     Method to test your code  		  	   		 	   		  		  		    	 		 		   		 		  
@@ -199,6 +221,7 @@ def test_code():
     figure_1_plot(figure_1)
     figure_2 = simple_simulator(1000, win_prob)
     figure_2_plot(figure_2)
+    figure_3_plot(figure_2)
     # print(realistic_betting_strategy(win_prob))
     # figure_4 = realistic_simulator(1000, win_prob)
     # print(figure_1)
