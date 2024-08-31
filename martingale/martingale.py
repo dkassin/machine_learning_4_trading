@@ -92,7 +92,7 @@ def realistic_betting_strategy(win_prob):
     bet_amount = 1
     bank_roll = 50
 
-    for _ in range(20):
+    for _ in range(1000):
         if episode_winnings >= 80 or episode_winnings <= (-50):
             winnings.append(episode_winnings)
         else:
@@ -210,6 +210,51 @@ def figure_3_plot(array):
     plt.legend(loc=0, fontsize=12)
     plt.savefig('images/simple_simulator_median_winnings_with_standard_deviation_bounds')
 
+def figure_4_plot(array):
+    mean_winnings = array[-3]
+    stdev_winnings = array[-1]
+
+    upper_bound = mean_winnings + stdev_winnings
+    lower_bound = mean_winnings - stdev_winnings
+
+    plt.figure(figsize=(10,6))
+
+    plt.plot(mean_winnings, label = 'Mean Episode Winnings', color = 'blue')
+    plt.plot(upper_bound, label = 'Standard Deviation Upper Bound', color = 'green', alpha=0.5)
+    plt.plot(lower_bound, label = 'Standard Deviation Lower Bound', color = 'red', alpha=0.5)
+
+    plt.xlim(0, 300)
+    plt.ylim(-256, 100)
+
+    plt.xlabel('Spins')
+    plt.ylabel('Winnings')
+    plt.title('Realistic Simulator, Mean Winnings with Standard Deviation Bounds', fontsize=16)
+    plt.legend(loc=0, fontsize=12)
+    plt.savefig('images/realistic_simulator_mean_winnings_with_standard_deviation_bounds')
+
+def figure_5_plot(array):
+    median_winnings = array[-2]
+    stdev_winnings = array[-1]
+
+    upper_bound = median_winnings + stdev_winnings
+    lower_bound = median_winnings - stdev_winnings
+
+    plt.figure(figsize=(10,6))
+
+    plt.plot(median_winnings, label = 'Median Episode Winnings', color = 'blue')
+    plt.plot(upper_bound, label = 'Standard Deviation Upper Bound', color = 'green', alpha=0.5)
+    plt.plot(lower_bound, label = 'Standard Deviation Lower Bound', color = 'red', alpha=0.5)
+
+    plt.xlim(0, 300)
+    plt.ylim(-256, 100)
+
+    plt.xlabel('Spins')
+    plt.ylabel('Winnings')
+    plt.title('Realistic Simulator, Median Winnings with Standard Deviation Bounds', fontsize=16)
+    plt.legend(loc=0, fontsize=12)
+    plt.savefig('images/realistic_simulator_median_winnings_with_standard_deviation_bounds')
+
+
 def test_code():  		  	   		 	   		  		  		    	 		 		   		 		  
     """  		  	   		 	   		  		  		    	 		 		   		 		  
     Method to test your code  		  	   		 	   		  		  		    	 		 		   		 		  
@@ -217,19 +262,15 @@ def test_code():
     win_prob = 0.4736  # set appropriately to the probability of a win  		  	   		 	   		  		  		    	 		 		   		 		  
     np.random.seed(gtid())  # do this only once  		  	   		 	   		  		  		    	 		 		   		 		  
     # print(get_spin_result(win_prob))  # test the roulette spin
-    figure_1 = simple_simulator(10, win_prob)
-    figure_1_plot(figure_1)
-    figure_2 = simple_simulator(1000, win_prob)
-    figure_2_plot(figure_2)
-    figure_3_plot(figure_2)
-    # print(realistic_betting_strategy(win_prob))
-    # figure_4 = realistic_simulator(1000, win_prob)
-    # print(figure_1)
-    # add your code here to implement the experiments  		  	   		 	   		  		  		    	 		 		   		 		  
-  		  	   		 	   		  		  		    	 		 		   		 		  
+    simple_simulator_10_episodes = simple_simulator(10, win_prob)
+    figure_1_plot(simple_simulator_10_episodes)
+    simple_simulator_1000_episodes = simple_simulator(1000, win_prob)
+    figure_2_plot(simple_simulator_1000_episodes)
+    figure_3_plot(simple_simulator_1000_episodes)
+    realistic_simulator_1000_episodes = realistic_simulator(1000, win_prob)
+    figure_4_plot(realistic_simulator_1000_episodes)
+    figure_5_plot(realistic_simulator_1000_episodes)
+		  	   		 	   		  		  		    	 		 		   		 		   		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
 if __name__ == "__main__":		    	 		 		   		 		  
     test_code()  		  	   		 	   		  		  		    	 		 		   		 		  
-
-
-# Notes, both strategies are implemented, just need to add the matplotlib charts and then write reports.
