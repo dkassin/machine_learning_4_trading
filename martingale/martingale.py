@@ -66,67 +66,86 @@ def get_spin_result(win_prob):
 
 def bach_betting_strategy(win_prob):
     episode_winnings = 0
-    episode_array = [0]
+    winnings = [0]
     bet_amount = 1
 
     for _ in range(20):
         if episode_winnings >= 80:
-            episode_array.append(episode_winnings)
+            winnings.append(episode_winnings)
         else:
             won = get_spin_result(win_prob)
             if won:
                 episode_winnings = episode_winnings + bet_amount
-                episode_array.append(episode_winnings)
+                winnings.append(episode_winnings)
                 bet_amount = 1
             else:
                 episode_winnings = episode_winnings - bet_amount
-                episode_array.append(episode_winnings)
+                winnings.append(episode_winnings)
                 bet_amount =  bet_amount * 2
 
 
-    return np.array(episode_array)
+    return np.array(winnings)
 
 def realistic_betting_strategy(win_prob):
     episode_winnings = 0
-    episode_array = [0]
+    winnings = [0]
     bet_amount = 1
     bank_roll = 50
 
     for _ in range(20):
         if episode_winnings >= 80 or episode_winnings <= (-50):
-            episode_array.append(episode_winnings)
+            winnings.append(episode_winnings)
         else:
             won = get_spin_result(win_prob)
             if won:
                 episode_winnings += bet_amount
                 bank_roll += bet_amount
-                episode_array.append(episode_winnings)
+                winnings.append(episode_winnings)
                 bet_amount = 1
             else:
                 episode_winnings -= bet_amount
                 bank_roll -= bet_amount
-                episode_array.append(episode_winnings)
+                winnings.append(episode_winnings)
                 if (bank_roll - (bet_amount*2)) > 0:
                     bet_amount =  bet_amount * 2
                 else:
                     bet_amount = bank_roll
 
-    return np.array(episode_array)
+    return np.array(winnings)
 
 def simple_simulator(number_of_episodes, win_prob):
     episodes = []
     for _ in range(number_of_episodes):
-        episode_array = bach_betting_strategy(win_prob)
-        episodes.append(episode_array)
+        winnings = bach_betting_strategy(win_prob)
+        episodes.append(winnings)
 
     spin_array = np.stack(episodes, axis = 0)
     mean_values = np.mean(spin_array, axis = 0)
     median_values = np.median(spin_array, axis = 0)
     std_values = np.std(spin_array, axis = 0)
 
-    mean_values = np.round(mean_values, 2)
-    median_values = np.round(median_values, 2)
-    std_values = np.round(std_values, 2)
+    mean_values = np.round(mean_values, 4)
+    median_values = np.round(median_values, 4)
+    std_values = np.round(std_values, 4)
+
+    stats_stack = np.stack([mean_values, median_values, std_values], axis = 0)
+    final_array = np.concatenate([spin_array, stats_stack], axis = 0)
+    print(final_array)
+
+def realistic_simulator(number_of_episodes, win_prob):
+    episodes = []
+    for _ in range(number_of_episodes):
+        winnings = realistic_betting_strategy(win_prob)
+        episodes.append(winnings)
+
+    spin_array = np.stack(episodes, axis = 0)
+    mean_values = np.mean(spin_array, axis = 0)
+    median_values = np.median(spin_array, axis = 0)
+    std_values = np.std(spin_array, axis = 0)
+
+    mean_values = np.round(mean_values, 4)
+    median_values = np.round(median_values, 4)
+    std_values = np.round(std_values, 4)
 
     stats_stack = np.stack([mean_values, median_values, std_values], axis = 0)
     final_array = np.concatenate([spin_array, stats_stack], axis = 0)
@@ -137,7 +156,7 @@ def test_code():
     Method to test your code  		  	   		 	   		  		  		    	 		 		   		 		  
     """  		  	  
     np.set_printoptions(linewidth=np.inf) 	
-    win_prob = 0.47368421  # set appropriately to the probability of a win  		  	   		 	   		  		  		    	 		 		   		 		  
+    win_prob = 0.4736  # set appropriately to the probability of a win  		  	   		 	   		  		  		    	 		 		   		 		  
     np.random.seed(gtid())  # do this only once  		  	   		 	   		  		  		    	 		 		   		 		  
     # print(get_spin_result(win_prob))  # test the roulette spin
     # figure_1 = simple_simulator(10, win_prob)
@@ -149,3 +168,6 @@ def test_code():
   		  	   		 	   		  		  		    	 		 		   		 		  
 if __name__ == "__main__":		    	 		 		   		 		  
     test_code()  		  	   		 	   		  		  		    	 		 		   		 		  
+
+
+# Notes, both strategies are implemented, just need to add the matplotlib charts and then write reports.
