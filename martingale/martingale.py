@@ -288,7 +288,7 @@ def summary_stats_text_file(experiment_1_stats, experiment_2_stats, filename="p1
         file.write(f"Standard Deviation of Winnings: {experiment_1_stats['stdev_winnings']}\n")
         file.write(f"Sum of Final Winnings: {experiment_1_stats['final_winnings_value_sum']}\n")
         file.write(f"Minimum Winnings: {experiment_1_stats['min_value']}\n")
-        file.write(f"Expected Value (Mean Winnings): {experiment_1_stats['expected_value']}\n")
+        file.write(f"Expected Value: {experiment_1_stats['expected_value']}\n")
         file.write(f"Percentage of Episodes Reaching $80 at 50,100,150,200,1000: {experiment_1_stats['percentage_stats']}\n")
         file.write("\n")
         file.write("Experiment 2:\n")
@@ -296,9 +296,8 @@ def summary_stats_text_file(experiment_1_stats, experiment_2_stats, filename="p1
         file.write(f"Standard Deviation of Winnings: {experiment_2_stats['stdev_winnings']}\n")
         file.write(f"Sum of Final Winnings: {experiment_2_stats['final_winnings_value_sum']}\n")
         file.write(f"Minimum Winnings: {experiment_2_stats['min_value']}\n")
-        file.write(f"Expected Value (Mean Winnings): {experiment_2_stats['expected_value']}\n")
+        file.write(f"Expected Value: {experiment_2_stats['expected_value']}\n")
         file.write(f"Percentage of Episodes Reaching $80 at 50,100,150,200,1000 Intervals: {experiment_2_stats['percentage_stats']}\n")
-
 
 def test_code():  		  	   		 	   		  		  		    	 		 		   		 		  
     """  		  	   		 	   		  		  		    	 		 		   		 		  
