@@ -1,0 +1,15 @@
+Experiment 1:
+---------------------------
+Standard Deviation of Winnings: 0.0
+Sum of Final Winnings: 80000.0
+Minimum Winnings: -65532.0
+Expected Value (Mean Winnings): 80.0
+Percentage of Episodes Reaching $80 at 50,100,150,200,1000: [0.0, 0.0, 7.807807807807808, 99.1991991991992, 100.10010010010011]
+
+Experiment 2:
+---------------------------
+Standard Deviation of Winnings: 161.866
+Sum of Final Winnings: -43381.0
+Minimum Winnings: -256.0
+Expected Value (Mean Winnings): -43.381
+Percentage of Episodes Reaching $80 at 50,100,150,200,1000 Intervals: [0.0, 0.0, 6.706706706706707, 61.46146146146146, 63.16316316316316]

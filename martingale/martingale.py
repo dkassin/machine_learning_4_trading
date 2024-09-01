@@ -160,8 +160,8 @@ def figure_1_plot(array):
     plt.xlim(0, 300)
     plt.ylim(-256, 100)
 
-    plt.xlabel('Spins')
-    plt.ylabel('Winnings')
+    plt.xlabel('Spins', fontsize=14)
+    plt.ylabel('Winnings', fontsize=14)
     plt.title('Simple Simulator, 10 Episodes Winnings Over Spins', fontsize=16)
     plt.legend(loc=0, fontsize=12)
     plt.savefig('images/simple_simulator_10_episodes_winnings_over_spins')
@@ -182,8 +182,8 @@ def figure_2_plot(array):
     plt.xlim(0, 300)
     plt.ylim(-256, 100)
 
-    plt.xlabel('Spins')
-    plt.ylabel('Winnings')
+    plt.xlabel('Spins', fontsize=14)
+    plt.ylabel('Winnings', fontsize=14)
     plt.title('Simple Simulator, Mean Winnings with Standard Deviation Bounds', fontsize=16)
     plt.legend(loc=0, fontsize=12)
     plt.savefig('images/simple_simulator_mean_winnings_with_standard_deviation_bounds')
@@ -204,8 +204,8 @@ def figure_3_plot(array):
     plt.xlim(0, 300)
     plt.ylim(-256, 100)
 
-    plt.xlabel('Spins')
-    plt.ylabel('Winnings')
+    plt.xlabel('Spins', fontsize=14)
+    plt.ylabel('Winnings', fontsize=14)
     plt.title('Simple Simulator, Median Winnings with Standard Deviation Bounds', fontsize=16)
     plt.legend(loc=0, fontsize=12)
     plt.savefig('images/simple_simulator_median_winnings_with_standard_deviation_bounds')
@@ -226,8 +226,8 @@ def figure_4_plot(array):
     plt.xlim(0, 300)
     plt.ylim(-256, 100)
 
-    plt.xlabel('Spins')
-    plt.ylabel('Winnings')
+    plt.xlabel('Spins', fontsize=14)
+    plt.ylabel('Winnings', fontsize=14)
     plt.title('Realistic Simulator, Mean Winnings with Standard Deviation Bounds', fontsize=16)
     plt.legend(loc=0, fontsize=12)
     plt.savefig('images/realistic_simulator_mean_winnings_with_standard_deviation_bounds')
@@ -248,11 +248,56 @@ def figure_5_plot(array):
     plt.xlim(0, 300)
     plt.ylim(-256, 100)
 
-    plt.xlabel('Spins')
-    plt.ylabel('Winnings')
+    plt.xlabel('Spins', fontsize=14)
+    plt.ylabel('Winnings', fontsize=14)
     plt.title('Realistic Simulator, Median Winnings with Standard Deviation Bounds', fontsize=16)
     plt.legend(loc=0, fontsize=12)
     plt.savefig('images/realistic_simulator_median_winnings_with_standard_deviation_bounds')
+
+def summary_statistics(array):
+    stdev_winnings = array[-1][-1]
+    array_no_stats = array[:-3]
+    final_winnings_value_sum = np.sum(array_no_stats[: ,-1])
+    min_value = np.min(array_no_stats)
+    expected_value = np.mean(array_no_stats[:, -1])
+    percentage_stats = percentage_at_80(array_no_stats)
+
+    return {
+        "stdev_winnings": stdev_winnings,
+        "final_winnings_value_sum": final_winnings_value_sum,
+        "min_value": min_value,
+        "expected_value": expected_value,
+        "percentage_stats": percentage_stats
+    }
+
+def percentage_at_80(array):
+    spin_indices = [50,100,150,200,1000]
+    percentages = []
+
+    for i in spin_indices:
+        count_80 = np.sum(array[:, i] == 80)
+        percentage = (count_80 / (array.shape[0]- 1)) * 100
+        percentages.append(percentage)
+
+    return percentages
+
+def summary_stats_text_file(experiment_1_stats, experiment_2_stats, filename="p1_results.txt"):
+    with open(filename, "w") as file:
+        file.write("Experiment 1:\n")
+        file.write("---------------------------\n")
+        file.write(f"Standard Deviation of Winnings: {experiment_1_stats['stdev_winnings']}\n")
+        file.write(f"Sum of Final Winnings: {experiment_1_stats['final_winnings_value_sum']}\n")
+        file.write(f"Minimum Winnings: {experiment_1_stats['min_value']}\n")
+        file.write(f"Expected Value (Mean Winnings): {experiment_1_stats['expected_value']}\n")
+        file.write(f"Percentage of Episodes Reaching $80 at 50,100,150,200,1000: {experiment_1_stats['percentage_stats']}\n")
+        file.write("\n")
+        file.write("Experiment 2:\n")
+        file.write("---------------------------\n")
+        file.write(f"Standard Deviation of Winnings: {experiment_2_stats['stdev_winnings']}\n")
+        file.write(f"Sum of Final Winnings: {experiment_2_stats['final_winnings_value_sum']}\n")
+        file.write(f"Minimum Winnings: {experiment_2_stats['min_value']}\n")
+        file.write(f"Expected Value (Mean Winnings): {experiment_2_stats['expected_value']}\n")
+        file.write(f"Percentage of Episodes Reaching $80 at 50,100,150,200,1000 Intervals: {experiment_2_stats['percentage_stats']}\n")
 
 
 def test_code():  		  	   		 	   		  		  		    	 		 		   		 		  
@@ -270,7 +315,9 @@ def test_code():
     realistic_simulator_1000_episodes = realistic_simulator(1000, win_prob)
     figure_4_plot(realistic_simulator_1000_episodes)
     figure_5_plot(realistic_simulator_1000_episodes)
-		  	   		 	   		  		  		    	 		 		   		 		   		  	   		 	   		  		  		    	 		 		   		 		  
+    experiment_1_stats = summary_statistics(simple_simulator_1000_episodes)
+    experiment_2_stats = summary_statistics(realistic_simulator_1000_episodes)
+    summary_stats_text_file(experiment_1_stats, experiment_2_stats)   		 	   		  		  		    	 		 		   		 		   		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
 if __name__ == "__main__":		    	 		 		   		 		  
     test_code()  		  	   		 	   		  		  		    	 		 		   		 		  
