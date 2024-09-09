@@ -96,8 +96,8 @@ def optimize_portfolio(
 
     prices_spy = prices_SPY / prices_SPY[0]
        
-    if gen_plot:  		  	   		 	   		  		  		    	 		 		   		 		  
-        # add code to plot here  		  	   		 	   		  		  		    	 		 		   		 		  
+    if gen_plot:  		  	   		
+
         df_temp = pd.concat(  		  	   		 	   		  		  		    	 		 		   		 		  
             [port_val, prices_spy], keys=["Portfolio", "SPY"], axis=1  		  	   		 	   		  		  		    	 		 		   		 		  
         )
@@ -110,9 +110,10 @@ def optimize_portfolio(
         plt.ylabel('Price', fontsize=14)
         plt.xlim([df_temp.index.min(), df_temp.index.max()])
         plt.xticks(rotation=45)
-        plt.grid(visible=True, which='both', axis='both', linestyle='--', linewidth=0.5)
+        plt.grid(visible=True, linestyle='--', linewidth=0.5)
         plt.title('Daily Portfolio Value and Spy', fontsize=16)
         plt.legend(loc=0, fontsize=12)
+        plt.tight_layout()
         plt.savefig('images/figure1.png')
 
         pass  		  	   		 	   		  		  		    	 		 		   		 		  
