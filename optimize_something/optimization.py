@@ -82,58 +82,79 @@ def optimize_portfolio(
     prices_all = get_data(syms, dates)  # automatically adds SPY  		  	   		 	   		  		  		    	 		 		   		 		  
     prices = prices_all[syms]  # only portfolio symbols  		  	   		 	   		  		  		    	 		 		   		 		  
     prices_SPY = prices_all["SPY"]  # only SPY, for comparison later  		  	   		 	   		  		  		    	 		 		   		 		  
-    
-    # find the allocations for the optimal portfolio  		  	   		 	   		  		  		    	 		 		   		 		  
-    # note that the values here ARE NOT meant to be correct for a test case  		  	   		 	   		  		  		    	 		 		   		 		  
-    allocs = np.asarray(  		  	   		 	   		  		  		    	 		 		   		 		  
-        [0.2, 0.2, 0.1, 0.3, 0.2]  		  	   		 	   		  		  		    	 		 		   		 		  
-    )  # add code here to find the allocations  	
 
+
+    for column in prices.columns:
+        prices[column] = prices[column] / prices[column][0]
+	  	   		 	   		  		  		    	 		 		   		 		  
+    allocs = np.round(calc_optimal_portfolio(prices, determine_sharpe), 4)
 
     cr, adr, sddr, sr = calculate_stats(prices, allocs) 		  	   		 	   		  		  		    	 		 		   		 		  
  	   		 	   		  		  		    	 		 		   		 		  
     # Get daily portfolio value  		
-    # import pdb; pdb.set_trace()   	   		 	   		  		  		    	 		 		   		 		  
-    port_val = prices_SPY  # add code here to compute daily portfolio values  		  	   		 	   		  		  		    	 		 		   		 		  
-  		  	   		 	   		  		  		    	 		 		   		 		  
-    # Compare daily portfolio value with SPY using a normalized plot  		  	   		 	   		  		  		    	 		 		   		 		  
+    port_val = calc_port_val(prices, allocs)
+
+    prices_spy = prices_SPY / prices_SPY[0]
+       
     if gen_plot:  		  	   		 	   		  		  		    	 		 		   		 		  
         # add code to plot here  		  	   		 	   		  		  		    	 		 		   		 		  
         df_temp = pd.concat(  		  	   		 	   		  		  		    	 		 		   		 		  
-            [port_val, prices_SPY], keys=["Portfolio", "SPY"], axis=1  		  	   		 	   		  		  		    	 		 		   		 		  
-        )  		  	   		 	   		  		  		    	 		 		   		 		  
+            [port_val, prices_spy], keys=["Portfolio", "SPY"], axis=1  		  	   		 	   		  		  		    	 		 		   		 		  
+        )
+
+        plt.figure(figsize=(10,6))
+
+        plt.plot(df_temp['Portfolio'], label = 'Portfolio', color = 'blue')
+        plt.plot(df_temp['SPY'], label = 'Spy', color = 'green')
+        plt.xlabel('Date', fontsize=14)
+        plt.ylabel('Price', fontsize=14)
+        plt.xlim([df_temp.index.min(), df_temp.index.max()])
+        plt.xticks(rotation=45)
+        plt.grid(visible=True, which='both', axis='both', linestyle='--', linewidth=0.5)
+        plt.title('Daily Portfolio Value and Spy', fontsize=16)
+        plt.legend(loc=0, fontsize=12)
+        plt.savefig('images/figure1.png')
+
         pass  		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
     return allocs, cr, adr, sddr, sr  		  	   		 	   		  		  		    	 		 		   		 		  
-  		  	   		 	   		  		  
-def calc_cumulative_returns(data, allo_weights):
-    individual_cumulative_returns = ((data.iloc[-1] - data.iloc[0]) / data.iloc[0])
-    weighted_cumulative_returns = individual_cumulative_returns * allo_weights
-    portfolio_cumulative_return = weighted_cumulative_returns.sum().round(2)
-    return portfolio_cumulative_return
+ 
+def calc_port_val(prices, allo_weights):
+    indvidiual_portfolio_value = prices * allo_weights * 1 
+    total_portfolio_value = indvidiual_portfolio_value.sum(axis=1)
+    return total_portfolio_value
 
-def calc_avg_daily_return(prices, allo_weights):
-    individual_avg_daily_returns = prices.pct_change().shift(-1).dropna().mean()
-    weighted_avg_daily_returns = individual_avg_daily_returns * allo_weights
-    portfolio_avg_daily_return = weighted_avg_daily_returns.sum().round(4)
-    return portfolio_avg_daily_return
+def calculate_stats(prices, allo_weights):
+    indvidiual_portfolio_value = prices * allo_weights * 1 
+    total_portfolio_value = indvidiual_portfolio_value.sum(axis=1)
+    daily_returns = total_portfolio_value.pct_change().dropna()
+    portfolio_cumulative_return = total_portfolio_value[-1] / total_portfolio_value[0]
+    avg_daily_return = daily_returns.mean()
+    portfolio_std = daily_returns.std()
+    sharpe_ratio = avg_daily_return / portfolio_std * np.sqrt(252)
+    return portfolio_cumulative_return, avg_daily_return, portfolio_std, sharpe_ratio
 
-def calc_std_daily_return(prices, allo_weights):
-    individual_std_daily_returns = prices.pct_change().shift(-1).dropna().std()
-    weighted_std_daily_returns = individual_std_daily_returns * allo_weights
-    portfolio_std_daily_return = weighted_std_daily_returns.sum().round(4)
-    return portfolio_std_daily_return
+def determine_sharpe(weights, prices):
+    indvidiual_portfolio_value = prices * weights * 1 
+    total_portfolio_value = indvidiual_portfolio_value.sum(axis=1)
+    daily_returns = total_portfolio_value.pct_change().dropna()
+    avg_daily_return = daily_returns.mean()
+    portfolio_std = daily_returns.std()
+    sharpe_ratio = avg_daily_return / portfolio_std * np.sqrt(252) * -1
+    # import pdb; pdb.set_trace()
+    # print(f"Weights: {weights}, Sharpe Ratio: {sharpe_ratio}")
+    return sharpe_ratio
 
-def calc_portfolio_sharp_ratio(daily_returns_mean, daily_returns_std):
-    portfolio_sharp_ratio = (daily_returns_mean / daily_returns_std) * np.sqrt(252)
-    return portfolio_sharp_ratio
+def calc_optimal_portfolio(data, determine_sharpe):
+    number_of_stocks = data.shape[1]
+    portfolio_guess = np.ones(number_of_stocks) * (1 / number_of_stocks)
+    
+    bounds_val = [(0.0,1.0) for _ in range(number_of_stocks)]
+    constraints_val = [{'type': 'eq', 'fun': lambda weights: 1.0 - np.sum(weights)}]
 
-def calculate_stats(data, allo_weights):
-    portfolio_cumulative_return = calc_cumulative_returns(data, allo_weights)
-    portfolio_avg_daily_return = calc_avg_daily_return(data, allo_weights)
-    portfolio_std_daily_return = calc_std_daily_return(data, allo_weights)
-    portfolio_sharp_ratio = calc_portfolio_sharp_ratio(portfolio_avg_daily_return, portfolio_std_daily_return)
-    return portfolio_cumulative_return, portfolio_avg_daily_return, portfolio_std_daily_return, portfolio_sharp_ratio
+    result = spo.minimize(determine_sharpe, portfolio_guess, args=(data,), bounds=bounds_val, constraints=constraints_val, method='SLSQP', options={'disp':False})
+    # import pdb; pdb.set_trace()
+    return result.x
 
 def test_code():  		  	   		 	   		  		  		    	 		 		   		 		  
     """  		  	   		 	   		  		  		    	 		 		   		 		  

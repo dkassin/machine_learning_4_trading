@@ -230,7 +230,7 @@ def figure_4_plot(array):
     plt.ylabel('Winnings', fontsize=14)
     plt.title('Realistic Simulator, Mean Winnings with Standard Deviation Bounds', fontsize=16)
     plt.legend(loc=0, fontsize=12)
-    plt.savefig('images/realistic_simulator_mean_winnings_with_standard_deviation_bounds')
+    plt.savefig('images/realistic_simulator_mean_winnings_with_standard_deviation_bounds.png')
 
 def figure_5_plot(array):
     median_winnings = array[-2]
