@@ -47,6 +47,23 @@ def check_for_headers(data):
     else:
        return 1
 
+def compute_correlations(data_x, data_y):
+    correlations = np.zeros(data_x.shape[1])
+    for i in range(data_x.shape[1]):
+        correlations[i] = np.corrcoef(data_x[:, i], data_y)[0, 1]
+    
+    return correlations
+
+def factor_selector(data_x, data_y):
+    correlation_table = compute_correlations(data_x, data_y)
+    max_correlation_index = np.argmax(np.abs(correlation_table))
+    return max_correlation_index
+
+def build_tree(data_x, data_y, leaf_size):
+        reshape_data_y = data_y.reshape(-1, 1)
+        combined_data = np.hstack((data_x, reshape_data_y))
+        import pdb; pdb.set_trace()
+
 def get_data(arg):
     inf = open(arg)  	
     unprocessed_data  = inf.readlines()
@@ -64,16 +81,22 @@ def get_data(arg):
         )     
 
     inf.close()
-    return data
+    	    	   		 	   		  		  		    	 		 		   		 		  
+    data_x = data[:, :-1]
+    data_y = data[:, -1]
+
+    return data_x, data_y
   		  	   		 	   		  		  		    	 		 		   		 		  
 if __name__ == "__main__":  		  	   		 	   		  		  		    	 		 		   		 		  
     if len(sys.argv) != 2:  		  	   		 	   		  		  		    	 		 		   		 		  
         print("Usage: python testlearner.py <filename>")  		  	   		 	   		  		  		    	 		 		   		 		  
         sys.exit(1)
 
-    data = get_data(sys.argv[1])
-    # import pdb; pdb.set_trace()	    	   		 	   		  		  		    	 		 		   		 		  
+    data_x, data_y = get_data(sys.argv[1])
+
+    build_tree(data_x, data_y, 1)
     
+
     # compute how much of the data is training and testing  		  	   		 	   		  		  		    	 		 		   		 		  
     train_rows = int(0.6 * data.shape[0])  		  	   		 	   		  		  		    	 		 		   		 		  
     test_rows = data.shape[0] - train_rows  		  	   		 	   		  		  		    	 		 		   		 		  
