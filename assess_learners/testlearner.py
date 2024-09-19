@@ -59,10 +59,7 @@ def factor_selector(data_x, data_y):
     max_correlation_index = np.argmax(np.abs(correlation_table))
     return max_correlation_index
 
-def build_tree(data_x, data_y, leaf_size):
-        reshape_data_y = data_y.reshape(-1, 1)
-        combined_data = np.hstack((data_x, reshape_data_y))
-        import pdb; pdb.set_trace()
+        
 
 def get_data(arg):
     inf = open(arg)  	
@@ -93,24 +90,28 @@ if __name__ == "__main__":
         sys.exit(1)
 
     data_x, data_y = get_data(sys.argv[1])
-
-    build_tree(data_x, data_y, 1)
+    reshaped_data_y = data_y.reshape(-1, 1)
+    combined_data = np.hstack((data_x, reshaped_data_y))
+    # build_tree(combined_data, 1)
     
 
     # compute how much of the data is training and testing  		  	   		 	   		  		  		    	 		 		   		 		  
-    train_rows = int(0.6 * data.shape[0])  		  	   		 	   		  		  		    	 		 		   		 		  
-    test_rows = data.shape[0] - train_rows  		  	   		 	   		  		  		    	 		 		   		 		  
+    train_rows = int(0.6 * combined_data.shape[0])  		  	   		 	   		  		  		    	 		 		   		 		  
+    test_rows = combined_data.shape[0] - train_rows  		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
     # separate out training and testing data  		  	   		 	   		  		  		    	 		 		   		 		  
-    train_x = data[:train_rows, 0:-1]  		  	   		 	   		  		  		    	 		 		   		 		  
-    train_y = data[:train_rows, -1]  		  	   		 	   		  		  		    	 		 		   		 		  
-    test_x = data[train_rows:, 0:-1]  		  	   		 	   		  		  		    	 		 		   		 		  
-    test_y = data[train_rows:, -1]  		  	   		 	   		  		  		    	 		 		   		 		  
+    train_x = combined_data[:train_rows, 0:-1]  		  	   		 	   		  		  		    	 		 		   		 		  
+    train_y = combined_data[:train_rows, -1]  		  	   		 	   		  		  		    	 		 		   		 		  
+    test_x = combined_data[train_rows:, 0:-1]  		  	   		 	   		  		  		    	 		 		   		 		  
+    test_y = combined_data[train_rows:, -1]  		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
     print(f"{test_x.shape}")  		  	   		 	   		  		  		    	 		 		   		 		  
     print(f"{test_y.shape}")  		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
-    # create a learner and train it  		  	   		 	   		  		  		    	 		 		   		 		  
+    # create a learner and train it  	
+    dt_learner = dt.DTLearner(leaf_size = 1, verbose = True)    
+    value = dt_learner.add_evidence(train_x, train_y)  	
+    
     learner = lrl.LinRegLearner(verbose=True)  # create a LinRegLearner  		  	   		 	   		  		  		    	 		 		   		 		  
     learner.add_evidence(train_x, train_y)  # train it  		  	   		 	   		  		  		    	 		 		   		 		  
     print(learner.author())  		  	   		 	   		  		  		    	 		 		   		 		  
