@@ -97,6 +97,7 @@ if __name__ == "__main__":
     if len(sys.argv) != 2:  		  	   		 	   		  		  		    	 		 		   		 		  
         print("Usage: python testlearner.py <filename>")  		  	   		 	   		  		  		    	 		 		   		 		  
         sys.exit(1)
+        
     np.set_printoptions(suppress=True)
     
     data_x, data_y = get_data(sys.argv[1])

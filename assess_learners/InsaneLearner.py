@@ -14,7 +14,7 @@ class InsaneLearner(object):
             learner.add_evidence(train_x, train_y)                	  	   		 	   		  		  		    	 		 		   			 	   		  		  		    	 		 		   		 		  
     def query(self, points):  		  	   		 	   		  		  		    	 		 		   		 		  
         predictions = np.zeros((points.shape[0], 20)) 		
-        for index, learner in enumerate(self.all_learners):
+        for index, learner in enumerate(self.learners):
             predictions[:, index] = learner.query(points)   		 	   		  		  		    	 		 		   		 		  
         return np.mean(predictions, axis=1)
 	

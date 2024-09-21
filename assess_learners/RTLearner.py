@@ -87,7 +87,7 @@ class RTLearner(object):
         combined_data = np.hstack((data_x, reshape_data_y)) 	
 
         self.tree = self.build_tree(combined_data)
-        import pdb; pdb.set_trace()
+        # import pdb; pdb.set_trace()
 
     def query(self, points):  		  	   		 	   		  		  		    	 		 		   		 		  
         """  		  	   		 	   		  		  		    	 		 		   		 		  
