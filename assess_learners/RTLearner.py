@@ -1,9 +1,5 @@
 import numpy as np  
-import random		  	   		 	   		  		  		    	 		 		   		 		  
-
-
-
-
+	  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
 class RTLearner(object):  		  	   		 	   		  		  		    	 		 		   		 		  
     """  		  	   		 	   		  		  		    	 		 		   		 		  
@@ -20,19 +16,12 @@ class RTLearner(object):
         """  		  	   		 	   		  		  		    	 		 		   		 		  
         Constructor method  		  	   		 	   		  		  		    	 		 		   		 		  
         """  
-        random.seed(self.gtid())
+
         self.tree = None  	 
         self.leaf_size = leaf_size
         self.verbose = verbose
         pass  # move along, these aren't the drones you're looking for  
-
-    def gtid(self):  		  	   		 	   		  		  		    	 		 		   		 		  
-        """  		  	   		 	   		  		  		    	 		 		   		 		  
-        :return: The GT ID of the student  		  	   		 	   		  		  		    	 		 		   		 		  
-        :rtype: int  		  	   		 	   		  		  		    	 		 		   		 		  
-        """  		  	   		 	   		  		  		    	 		 		   		 		  
-        return 904063414  	
-
+	
     def author(self):  		  	   		 	   		  		  		    	 		 		   		 		  
         """  		  	   		 	   		  		  		    	 		 		   		 		  
         :return: The GT username of the student  		  	   		 	   		  		  		    	 		 		   		 		  
@@ -109,9 +98,25 @@ class RTLearner(object):
         :return: The predicted result of the input data according to the trained model  		  	   		 	   		  		  		    	 		 		   		 		  
         :rtype: numpy.ndarray  		  	   		 	   		  		  		    	 		 		   		 		  
         """  		  	   		 	   		  		  		    	 		 		   		 		  
-        return (self.model_coefs[:-1] * points).sum(axis=1) + self.model_coefs[  		  	   		 	   		  		  		    	 		 		   		 		  
-            -1  		  	   		 	   		  		  		    	 		 		   		 		  
-        ]  		 
+        predictions = np.zeros(points.shape[0])
+        for i, point in enumerate(points):
+            node_index = 0
+
+            while True:
+                node = self.tree[node_index]
+
+                if node[0] == 'leaf':
+                    predictions[i] = float(node[1])
+                    break
+
+                feature_index = int(node[0][1:])
+                if point[feature_index] <= float(node[1]):
+                    node_index += int(node[2])
+                else: 
+                    node_index += int(node[3])
+    
+        # import pdb; pdb.set_trace()
+        return predictions    
     
 
 if __name__ == "__main__":  		  	   		 	   		  		  		    	 		 		   		 		  

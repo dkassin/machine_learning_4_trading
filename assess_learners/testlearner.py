@@ -25,13 +25,23 @@ GT honor code violation.
   		  	   		 	   		  		  		    	 		 		   		 		  
 import math  		  	   		 	   		  		  		    	 		 		   		 		  
 import sys  		  	   		 	   		  		  		    	 		 		   		 		  
-  		  	   		 	   		  		  		    	 		 		   		 		  
+import random	 		  	   		 	   		  		  		    	 		 		   		 		  
 import numpy as np  		  	   		 	   		  		  		    	 		 		   		 		  
 import DTLearner as dt
 import RTLearner as rt
 import BagLearner as bl
 import InsaneLearner as it  	   		 	   		  		  		    	 		 		   		 		  
 import LinRegLearner as lrl  
+
+
+
+
+def gtid():  		  	   		 	   		  		  		    	 		 		   		 		  
+    """  		  	   		 	   		  		  		    	 		 		   		 		  
+    :return: The GT ID of the student  		  	   		 	   		  		  		    	 		 		   		 		  
+    :rtype: int  		  	   		 	   		  		  		    	 		 		   		 		  
+    """  		  	   		 	   		  		  		    	 		 		   		 		  
+    return 904063414  
 
 def is_numeric(value):
     try:
@@ -59,8 +69,6 @@ def factor_selector(data_x, data_y):
     max_correlation_index = np.argmax(np.abs(correlation_table))
     return max_correlation_index
 
-        
-
 def get_data(arg):
     inf = open(arg)  	
     unprocessed_data  = inf.readlines()
@@ -84,11 +92,13 @@ def get_data(arg):
 
     return data_x, data_y
   		  	   		 	   		  		  		    	 		 		   		 		  
-if __name__ == "__main__":  		  	   		 	   		  		  		    	 		 		   		 		  
+if __name__ == "__main__":  	
+    random.seed(gtid())	  	   		 	   		  		  		    	 		 		   		 		  
     if len(sys.argv) != 2:  		  	   		 	   		  		  		    	 		 		   		 		  
         print("Usage: python testlearner.py <filename>")  		  	   		 	   		  		  		    	 		 		   		 		  
         sys.exit(1)
-
+    np.set_printoptions(suppress=True)
+    
     data_x, data_y = get_data(sys.argv[1])
     reshaped_data_y = data_y.reshape(-1, 1)
     combined_data = np.hstack((data_x, reshaped_data_y))
@@ -110,14 +120,16 @@ if __name__ == "__main__":
   		  	   		 	   		  		  		    	 		 		   		 		  
     # create a learner and train it  	
     dt_learner = dt.DTLearner(leaf_size = 1, verbose = True)    
-    value = dt_learner.add_evidence(train_x, train_y)  	
-    
-    learner = lrl.LinRegLearner(verbose=True)  # create a LinRegLearner  		  	   		 	   		  		  		    	 		 		   		 		  
-    learner.add_evidence(train_x, train_y)  # train it  		  	   		 	   		  		  		    	 		 		   		 		  
-    print(learner.author())  		  	   		 	   		  		  		    	 		 		   		 		  
+    dt_learner.add_evidence(train_x, train_y)  	
+    print(dt_learner.author()) 
+    pred_y = dt_learner.query(train_x)
+
+    # learner = lrl.LinRegLearner(verbose=True)  # create a LinRegLearner  		  	   		 	   		  		  		    	 		 		   		 		  
+    # learner.add_evidence(train_x, train_y)  # train it  		  	   		 	   		  		  		    	 		 		   		 		  
+     		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
     # evaluate in sample  		  	   		 	   		  		  		    	 		 		   		 		  
-    pred_y = learner.query(train_x)  # get the predictions  		  	   		 	   		  		  		    	 		 		   		 		  
+    # pred_y = dt_learner.query(train_x)  # get the predictions  		  	   		 	   		  		  		    	 		 		   		 		  
     rmse = math.sqrt(((train_y - pred_y) ** 2).sum() / train_y.shape[0])  		  	   		 	   		  		  		    	 		 		   		 		  
     print()  		  	   		 	   		  		  		    	 		 		   		 		  
     print("In sample results")  		  	   		 	   		  		  		    	 		 		   		 		  
@@ -126,7 +138,7 @@ if __name__ == "__main__":
     print(f"corr: {c[0,1]}")  		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
     # evaluate out of sample  		  	   		 	   		  		  		    	 		 		   		 		  
-    pred_y = learner.query(test_x)  # get the predictions  		  	   		 	   		  		  		    	 		 		   		 		  
+    pred_y = dt_learner.query(test_x)  # get the predictions  		  	   		 	   		  		  		    	 		 		   		 		  
     rmse = math.sqrt(((test_y - pred_y) ** 2).sum() / test_y.shape[0])  		  	   		 	   		  		  		    	 		 		   		 		  
     print()  		  	   		 	   		  		  		    	 		 		   		 		  
     print("Out of sample results")  		  	   		 	   		  		  		    	 		 		   		 		  

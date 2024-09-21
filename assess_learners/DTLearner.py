@@ -89,9 +89,9 @@ class DTLearner(object):
         combined_data = np.hstack((data_x, reshape_data_y)) 	
 
         self.tree = self.build_tree(combined_data)
-        import pdb; pdb.set_trace()
 
-    def query(self, points):  		  	   		 	   		  		  		    	 		 		   		 		  
+    def query(self, points):  		  	
+
         """  		  	   		 	   		  		  		    	 		 		   		 		  
         Estimate a set of test points given the model we built.  		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
@@ -99,11 +99,26 @@ class DTLearner(object):
         :type points: numpy.ndarray  		  	   		 	   		  		  		    	 		 		   		 		  
         :return: The predicted result of the input data according to the trained model  		  	   		 	   		  		  		    	 		 		   		 		  
         :rtype: numpy.ndarray  		  	   		 	   		  		  		    	 		 		   		 		  
-        """  		  	   		 	   		  		  		    	 		 		   		 		  
-        return (self.model_coefs[:-1] * points).sum(axis=1) + self.model_coefs[  		  	   		 	   		  		  		    	 		 		   		 		  
-            -1  		  	   		 	   		  		  		    	 		 		   		 		  
-        ]  		 
+        """  		  	   
+        predictions = np.zeros(points.shape[0])
+        for i, point in enumerate(points):
+            node_index = 0
+
+            while True:
+                node = self.tree[node_index]
+
+                if node[0] == 'leaf':
+                    predictions[i] = float(node[1])
+                    break
+
+                feature_index = int(node[0][1:])
+                if point[feature_index] <= float(node[1]):
+                    node_index += int(node[2])
+                else: 
+                    node_index += int(node[3])
     
+        # import pdb; pdb.set_trace()
+        return predictions    
 
 if __name__ == "__main__":  		  	   		 	   		  		  		    	 		 		   		 		  
     print("the secret clue is 'zzyzx'")  		  	   		 	   		  		  		    	 		 		   		 		  
