@@ -123,10 +123,16 @@ if __name__ == "__main__":
     dt_learner.add_evidence(train_x, train_y)  	
     print(dt_learner.author()) 
     pred_y = dt_learner.query(train_x)
-
+    
     # learner = lrl.LinRegLearner(verbose=True)  # create a LinRegLearner  		  	   		 	   		  		  		    	 		 		   		 		  
     # learner.add_evidence(train_x, train_y)  # train it  		  	   		 	   		  		  		    	 		 		   		 		  
-     		  	   		 	   		  		  		    	 		 		   		 		  
+
+    bl_learner = bl.BagLearner(learner = dt.DTLearner, kwargs = {"leaf_size":1}, bags = 20, boost = False, verbose = False)  
+    value = bl_learner.add_evidence(train_x, train_y)  	
+    # print(dt_learner.author()) 
+    # pred_y = dt_learner.query(train_x)
+
+
   		  	   		 	   		  		  		    	 		 		   		 		  
     # evaluate in sample  		  	   		 	   		  		  		    	 		 		   		 		  
     # pred_y = dt_learner.query(train_x)  # get the predictions  		  	   		 	   		  		  		    	 		 		   		 		  
