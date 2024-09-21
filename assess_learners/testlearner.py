@@ -127,11 +127,11 @@ if __name__ == "__main__":
     
     # learner = lrl.LinRegLearner(verbose=True)  # create a LinRegLearner  		  	   		 	   		  		  		    	 		 		   		 		  
     # learner.add_evidence(train_x, train_y)  # train it  		  	   		 	   		  		  		    	 		 		   		 		  
-
-    bl_learner = bl.BagLearner(learner = dt.DTLearner, kwargs = {"leaf_size":1}, bags = 20, boost = False, verbose = False)  
-    bl_learner.add_evidence(train_x, train_y)  	
-    print(bl_learner.author()) 
-    pred_y = bl_learner.query(train_x)
+    bl_learner = it.InsaneLearner()
+    # bl_learner = bl.BagLearner(learner = dt.DTLearner, kwargs = {"leaf_size":1}, bags = 20, boost = False, verbose = False)  
+    # bl_learner.add_evidence(train_x, train_y)  	
+    # print(bl_learner.author()) 
+    # pred_y = bl_learner.query(train_x)
     # print(dt_learner.author()) 
     # pred_y = dt_learner.query(train_x)
 
