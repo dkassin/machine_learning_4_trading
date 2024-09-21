@@ -1,9 +1,5 @@
 import numpy as np  		  	   		 	   		  		  		    	 		 		   		 		  
-
-
-
-
-  		  	   		 	   		  		  		    	 		 		   		 		  
+	  	   		 	   		  		  		    	 		 		   		 		  
 class DTLearner(object):  		  	   		 	   		  		  		    	 		 		   		 		  
     """  		  	   		 	   		  		  		    	 		 		   		 		  
     This is a Decision Tree Learner (DTLearner)		  	   	
@@ -48,7 +44,8 @@ class DTLearner(object):
 
     def build_tree(self, data):
         if data.shape[0] <= self.leaf_size:
-            return np.asarray([["leaf", data[0,-1], np.nan, np.nan]])
+            leaf_value = np.median(data[:, -1])
+            return np.asarray([["leaf", leaf_value, np.nan, np.nan]])
         
         if np.all(data[:, -1] == data[0, -1]):
             leaf_value = np.median(data[:, -1])
@@ -65,6 +62,7 @@ class DTLearner(object):
         right_data = data[data[:, split_feature_index] > split_value]
 
         if left_data.shape[0] == 0 or right_data.shape[0] == 0:
+            # import pdb; pdb.set_trace()
             leaf_value = np.median(data[:, -1]) 
             return np.asarray([["leaf", leaf_value, np.nan, np.nan]])
 

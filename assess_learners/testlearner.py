@@ -32,7 +32,7 @@ import RTLearner as rt
 import BagLearner as bl
 import InsaneLearner as it  	   		 	   		  		  		    	 		 		   		 		  
 import LinRegLearner as lrl  
-
+import matplotlib.pyplot as plt	
 
 
 
@@ -103,10 +103,7 @@ if __name__ == "__main__":
     data_x, data_y = get_data(sys.argv[1])
     reshaped_data_y = data_y.reshape(-1, 1)
     combined_data = np.hstack((data_x, reshaped_data_y))
-    # build_tree(combined_data, 1)
-    
-
-    # compute how much of the data is training and testing  		  	   		 	   		  		  		    	 		 		   		 		  
+  		  	   		 	   		  		  		    	 		 		   		 		  
     train_rows = int(0.6 * combined_data.shape[0])  		  	   		 	   		  		  		    	 		 		   		 		  
     test_rows = combined_data.shape[0] - train_rows  		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
@@ -114,44 +111,78 @@ if __name__ == "__main__":
     train_x = combined_data[:train_rows, 0:-1]  		  	   		 	   		  		  		    	 		 		   		 		  
     train_y = combined_data[:train_rows, -1]  		  	   		 	   		  		  		    	 		 		   		 		  
     test_x = combined_data[train_rows:, 0:-1]  		  	   		 	   		  		  		    	 		 		   		 		  
-    test_y = combined_data[train_rows:, -1]  		  	   		 	   		  		  		    	 		 		   		 		  
-  		  	   		 	   		  		  		    	 		 		   		 		  
+    test_y = combined_data[train_rows:, -1]  		  	   		 	   		  		  		    	 		 		   		 		     	   		  		  		    	 		 		   		 		  
     print(f"{test_x.shape}")  		  	   		 	   		  		  		    	 		 		   		 		  
-    print(f"{test_y.shape}")  		  	   		 	   		  		  		    	 		 		   		 		  
-  		  	   		 	   		  		  		    	 		 		   		 		  
-    # create a learner and train it  	
-    dt_learner = dt.DTLearner(leaf_size = 1, verbose = True)   
-    print(dt_learner.author())  
-    dt_learner.add_evidence(train_x, train_y)  	
-    print(dt_learner.author()) 
-    pred_y = dt_learner.query(train_x)
+    print(f"{test_y.shape}")  	
+
+
+    # Experiment 1 
+
+    max_leaf_size = 25
+    experiment_1_learners = np.empty(max_leaf_size, dtype=object)
+
+    # Model Training for models up to max leaf size
+    for i in range(max_leaf_size):
+        experiment_1_learners[i] = dt.DTLearner(leaf_size=(i+1))
+        experiment_1_learners[i].add_evidence(train_x,train_y)
+
+    # import pdb; pdb.set_trace()
     
-    # learner = lrl.LinRegLearner(verbose=True)  # create a LinRegLearner  		  	   		 	   		  		  		    	 		 		   		 		  
-    # learner.add_evidence(train_x, train_y)  # train it  		  	   		 	   		  		  		    	 		 		   		 		  
-    bl_learner = it.InsaneLearner()
-    # bl_learner = bl.BagLearner(learner = dt.DTLearner, kwargs = {"leaf_size":1}, bags = 20, boost = False, verbose = False)  
-    # bl_learner.add_evidence(train_x, train_y)  	
-    # print(bl_learner.author()) 
-    # pred_y = bl_learner.query(train_x)
-    # print(dt_learner.author()) 
-    # pred_y = dt_learner.query(train_x)
+    training_rmse = np.zeros(max_leaf_size) 
+    training_corr = np.zeros(max_leaf_size)
+    
+    for i in range(max_leaf_size):
+        y_pred_train = experiment_1_learners[i].query(train_x)
+        training_rmse[i] = math.sqrt(((train_y - y_pred_train) ** 2).sum() / train_y.shape[0])  
+        training_corr[i] = np.corrcoef(y_pred_train, y=train_y)[0,1]  
+
+    testing_rmse = np.zeros(max_leaf_size)
+    testing_corr = np.zeros(max_leaf_size)
+    for i in range(max_leaf_size):
+        y_pred_test = experiment_1_learners[i].query(test_x)
+        testing_rmse[i] = math.sqrt(((test_y - y_pred_test) ** 2).sum() / test_y.shape[0])
+        testing_corr[i] = np.corrcoef(y_pred_test, y=test_y)[0,1]  
+
+    # import pdb; pdb.set_trace()
+
+    plt.figure(figsize=(10,6))
+    plt.plot(range(1,max_leaf_size + 1), training_rmse, label = 'Training RMSE', color = 'blue')
+    plt.plot(range(1,max_leaf_size + 1), testing_rmse, label = 'Testing RMSE', color = 'green')
+    plt.xlabel('Leaf Size', fontsize=14)
+    plt.ylabel('RMSE', fontsize=14)
+    plt.title('Leaf Size impact on RMSE', fontsize=16)
+    plt.legend(loc=0, fontsize=12)
+    plt.tight_layout()
+    plt.savefig('images/leaf_ssize_impact_on_rmse.png')
+
+    plt.figure(figsize=(10,6))
+    plt.plot(range(1,max_leaf_size + 1), training_corr, label = 'Training Corr', color = 'blue')
+    plt.plot(range(1,max_leaf_size + 1), testing_corr, label = 'Testing Corr', color = 'green')
+    plt.xlabel('Leaf Size', fontsize=14)
+    plt.ylabel('Correlation', fontsize=14)
+    plt.title('Leaf Size impact on Correlation', fontsize=16)
+    plt.legend(loc=0, fontsize=12)
+    plt.tight_layout()
+    plt.savefig('images/leaf_size_impact_on_corr.png')
+
+
 
 
   		  	   		 	   		  		  		    	 		 		   		 		  
     # evaluate in sample  		  	   		 	   		  		  		    	 		 		   		 		  
     # pred_y = dt_learner.query(train_x)  # get the predictions  		  	   		 	   		  		  		    	 		 		   		 		  
-    rmse = math.sqrt(((train_y - pred_y) ** 2).sum() / train_y.shape[0])  		  	   		 	   		  		  		    	 		 		   		 		  
-    print()  		  	   		 	   		  		  		    	 		 		   		 		  
-    print("In sample results")  		  	   		 	   		  		  		    	 		 		   		 		  
-    print(f"RMSE: {rmse}")  		  	   		 	   		  		  		    	 		 		   		 		  
-    c = np.corrcoef(pred_y, y=train_y)  		  	   		 	   		  		  		    	 		 		   		 		  
-    print(f"corr: {c[0,1]}")  		  	   		 	   		  		  		    	 		 		   		 		  
+    		  	   		 	   		  		  		    	 		 		   		 		  
+    # print()  		  	   		 	   		  		  		    	 		 		   		 		  
+    # print("In sample results")  		  	   		 	   		  		  		    	 		 		   		 		  
+    # print(f"RMSE: {rmse}")  		  	   		 	   		  		  		    	 		 		   		 		  
+    # c = np.corrcoef(pred_y, y=train_y)  		  	   		 	   		  		  		    	 		 		   		 		  
+    # print(f"corr: {c[0,1]}")  		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
-    # evaluate out of sample  		  	   		 	   		  		  		    	 		 		   		 		  
-    pred_y = dt_learner.query(test_x)  # get the predictions  		  	   		 	   		  		  		    	 		 		   		 		  
-    rmse = math.sqrt(((test_y - pred_y) ** 2).sum() / test_y.shape[0])  		  	   		 	   		  		  		    	 		 		   		 		  
-    print()  		  	   		 	   		  		  		    	 		 		   		 		  
-    print("Out of sample results")  		  	   		 	   		  		  		    	 		 		   		 		  
-    print(f"RMSE: {rmse}")  		  	   		 	   		  		  		    	 		 		   		 		  
-    c = np.corrcoef(pred_y, y=test_y)  		  	   		 	   		  		  		    	 		 		   		 		  
-    print(f"corr: {c[0,1]}")  		  	   		 	   		  		  		    	 		 		   		 		  
+    # # evaluate out of sample  		  	   		 	   		  		  		    	 		 		   		 		  
+    # # pred_y = dt_learner.query(test_x)  # get the predictions  		  	   		 	   		  		  		    	 		 		   		 		  
+    # # rmse = math.sqrt(((test_y - pred_y) ** 2).sum() / test_y.shape[0])  		  	   		 	   		  		  		    	 		 		   		 		  
+    # print()  		  	   		 	   		  		  		    	 		 		   		 		  
+    # print("Out of sample results")  		  	   		 	   		  		  		    	 		 		   		 		  
+    # print(f"RMSE: {rmse}")  		  	   		 	   		  		  		    	 		 		   		 		  
+    # c = np.corrcoef(pred_y, y=test_y)  		  	   		 	   		  		  		    	 		 		   		 		  
+    # print(f"corr: {c[0,1]}")  		  	   		 	   		  		  		    	 		 		   		 		  

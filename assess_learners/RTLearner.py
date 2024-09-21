@@ -45,7 +45,8 @@ class RTLearner(object):
 
     def build_tree(self, data):
         if data.shape[0] <= self.leaf_size:
-            return np.asarray([["leaf", data[0,-1], np.nan, np.nan]])
+            leaf_value = np.median(data[:, -1])
+            return np.asarray([["leaf", leaf_value, np.nan, np.nan]])
         
         if np.all(data[:, -1] == data[0, -1]):
             leaf_value = np.median(data[:, -1])
@@ -87,7 +88,7 @@ class RTLearner(object):
         combined_data = np.hstack((data_x, reshape_data_y)) 	
 
         self.tree = self.build_tree(combined_data)
-        # import pdb; pdb.set_trace()
+        
 
     def query(self, points):  		  	   		 	   		  		  		    	 		 		   		 		  
         """  		  	   		 	   		  		  		    	 		 		   		 		  

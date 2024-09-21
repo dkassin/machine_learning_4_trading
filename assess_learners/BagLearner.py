@@ -62,9 +62,9 @@ class BagLearner(object):
         return "dkassin3" 
 
     def create_learners(self):
-        learners = [] 
-        for i in range(0, self.bags): 
-            learners.append(self.learner(**self.kwargs)) 
+        learners = np.empty(self.bags, dtype=object)
+        for i in range(self.bags): 
+            learners[i] = self.learner(**self.kwargs) 
         
         return learners
 
