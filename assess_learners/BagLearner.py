@@ -65,6 +65,7 @@ class BagLearner(object):
         learners = [] 
         for i in range(0, self.bags): 
             learners.append(self.learner(**self.kwargs)) 
+        
         return learners
 
     def add_evidence(self, data_x, data_y):  		  	   		 	   		  		  		    	 		 		   		 		  
@@ -76,10 +77,16 @@ class BagLearner(object):
         :param data_y: The value we are attempting to predict given the X data  		  	   		 	   		  		  		    	 		 		   		 		  
         :type data_y: numpy.ndarray  		  	   		 	   		  		  		    	 		 		   		 		  
         """  
-        for learner in self.all_learners:
-            import pdb; pdb.set_trace()
-        	  	   		 	   		  		  		    	 		 		   		 		  
-  		  	   		 	   		  		  		    	 		 		   		 		  
+        reshape_data_y = data_y.reshape(-1, 1)
+        combined_data = np.hstack((data_x, reshape_data_y)) 
+
+        for index, learner in enumerate(self.all_learners):
+            # This was done so every bag with a random seed would not be the same, it should be completely reproducable tho.
+            random_sample = np.random.RandomState(index).choice(combined_data.shape[0],combined_data.shape[0], replace=True)     
+            train_x = combined_data[random_sample, :-1]  		  	   		 	   		  		  		    	 		 		   		 		  
+            train_y = combined_data[random_sample, -1]
+            learner.add_evidence(train_x, train_y)
+                  	  	   		 	   		  		  		    	 		 		   			 	   		  		  		    	 		 		   		 		  
     def query(self, points):  		  	   		 	   		  		  		    	 		 		   		 		  
         """  		  	   		 	   		  		  		    	 		 		   		 		  
         Estimate a set of test points given the model we built.  		  	   		 	   		  		  		    	 		 		   		 		  
@@ -88,10 +95,15 @@ class BagLearner(object):
         :type points: numpy.ndarray  		  	   		 	   		  		  		    	 		 		   		 		  
         :return: The predicted result of the input data according to the trained model  		  	   		 	   		  		  		    	 		 		   		 		  
         :rtype: numpy.ndarray  		  	   		 	   		  		  		    	 		 		   		 		  
-        """  		  	   		 	   		  		  		    	 		 		   		 		  
-        return (self.model_coefs[:-1] * points).sum(axis=1) + self.model_coefs[  		  	   		 	   		  		  		    	 		 		   		 		  
-            -1  		  	   		 	  		  		  		    	 		 		   		 		  
-        ]  		  	   		 	   		  		  		    	 		 		   		 		  
+        """
+        predictions = np.zeros((points.shape[0], self.bags)) 		
+        for index, learner in enumerate(self.all_learners):
+            individual_predictions = learner.query(points)   
+            predictions[:, index] = individual_predictions	   		 	   		  		  		    	 		 		   		 		  
+        
+        mean_predictions = np.mean(predictions, axis=1)
+        return mean_predictions
+        # import pdb; pdb.set_trace()	  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
 if __name__ == "__main__":  		  	   		 	   		  		  		    	 		 		   		 		  

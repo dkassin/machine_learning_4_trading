@@ -119,7 +119,8 @@ if __name__ == "__main__":
     print(f"{test_y.shape}")  		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
     # create a learner and train it  	
-    dt_learner = dt.DTLearner(leaf_size = 1, verbose = True)    
+    dt_learner = dt.DTLearner(leaf_size = 1, verbose = True)   
+    print(dt_learner.author())  
     dt_learner.add_evidence(train_x, train_y)  	
     print(dt_learner.author()) 
     pred_y = dt_learner.query(train_x)
@@ -128,7 +129,9 @@ if __name__ == "__main__":
     # learner.add_evidence(train_x, train_y)  # train it  		  	   		 	   		  		  		    	 		 		   		 		  
 
     bl_learner = bl.BagLearner(learner = dt.DTLearner, kwargs = {"leaf_size":1}, bags = 20, boost = False, verbose = False)  
-    value = bl_learner.add_evidence(train_x, train_y)  	
+    bl_learner.add_evidence(train_x, train_y)  	
+    print(bl_learner.author()) 
+    pred_y = bl_learner.query(train_x)
     # print(dt_learner.author()) 
     # pred_y = dt_learner.query(train_x)
 
