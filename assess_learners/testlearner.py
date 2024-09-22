@@ -33,6 +33,7 @@ import BagLearner as bl
 import InsaneLearner as it  	   		 	   		  		  		    	 		 		   		 		  
 import LinRegLearner as lrl  
 import matplotlib.pyplot as plt	
+import time
 
 
 
@@ -103,7 +104,7 @@ if __name__ == "__main__":
     data_x, data_y = get_data(sys.argv[1])
     reshaped_data_y = data_y.reshape(-1, 1)
     combined_data = np.hstack((data_x, reshaped_data_y))
-  		  	   		 	   		  		  		    	 		 		   		 		  
+    # import pdb; pdb.set_trace()
     train_rows = int(0.6 * combined_data.shape[0])  		  	   		 	   		  		  		    	 		 		   		 		  
     test_rows = combined_data.shape[0] - train_rows  		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
@@ -118,7 +119,7 @@ if __name__ == "__main__":
 
     # Experiment 1 
 
-    max_leaf_size = 25
+    max_leaf_size = 50
     experiment_1_learners = np.empty(max_leaf_size, dtype=object)
 
     # Model Training for models up to max leaf size
@@ -143,6 +144,50 @@ if __name__ == "__main__":
         testing_rmse[i] = math.sqrt(((test_y - y_pred_test) ** 2).sum() / test_y.shape[0])
         testing_corr[i] = np.corrcoef(y_pred_test, y=test_y)[0,1]  
 
+    plt.figure(figsize=(10,6))
+    plt.plot(range(1,max_leaf_size + 1), training_rmse, label = 'Training RMSE', color = 'blue')
+    plt.plot(range(1,max_leaf_size + 1), testing_rmse, label = 'Testing RMSE', color = 'green')
+    plt.xlabel('Leaf Size', fontsize=14)
+    plt.ylabel('RMSE', fontsize=14)
+    plt.title('Leaf Size impact on RMSE', fontsize=16)
+    plt.legend(loc=0, fontsize=12)
+    plt.tight_layout()
+    # plt.savefig('images/leaf_size_impact_on_rmse.png')
+
+    plt.figure(figsize=(10,6))
+    plt.plot(range(1,max_leaf_size + 1), training_corr, label = 'Training Corr', color = 'blue')
+    plt.plot(range(1,max_leaf_size + 1), testing_corr, label = 'Testing Corr', color = 'green')
+    plt.xlabel('Leaf Size', fontsize=14)
+    plt.ylabel('Correlation', fontsize=14)
+    plt.title('Leaf Size impact on Correlation', fontsize=16)
+    plt.legend(loc=0, fontsize=12)
+    plt.tight_layout()
+    # plt.savefig('images/leaf_size_impact_on_corr.png')
+
+    # Experiment 2 
+
+    max_leaf_size = 50
+    experiment_2_learners = np.empty(max_leaf_size, dtype=object)
+
+    for i in range(max_leaf_size):
+        experiment_2_learners[i] = bl.BagLearner(learner = dt.DTLearner, kwargs = {"leaf_size":i})
+        experiment_2_learners[i].add_evidence(train_x, train_y)
+
+    training_rmse = np.zeros(max_leaf_size) 
+    training_corr = np.zeros(max_leaf_size)
+    
+    for i in range(max_leaf_size):
+        y_pred_train = experiment_2_learners[i].query(train_x)
+        training_rmse[i] = math.sqrt(((train_y - y_pred_train) ** 2).sum() / train_y.shape[0])  
+        training_corr[i] = np.corrcoef(y_pred_train, y=train_y)[0,1]  
+
+    testing_rmse = np.zeros(max_leaf_size)
+    testing_corr = np.zeros(max_leaf_size)
+    for i in range(max_leaf_size):
+        y_pred_test = experiment_2_learners[i].query(test_x)
+        testing_rmse[i] = math.sqrt(((test_y - y_pred_test) ** 2).sum() / test_y.shape[0])
+        testing_corr[i] = np.corrcoef(y_pred_test, y=test_y)[0,1]  
+
     # import pdb; pdb.set_trace()
 
     plt.figure(figsize=(10,6))
@@ -153,7 +198,7 @@ if __name__ == "__main__":
     plt.title('Leaf Size impact on RMSE', fontsize=16)
     plt.legend(loc=0, fontsize=12)
     plt.tight_layout()
-    plt.savefig('images/leaf_ssize_impact_on_rmse.png')
+    # plt.savefig('images/bagging_leaf_size_impact_on_rmse.png')
 
     plt.figure(figsize=(10,6))
     plt.plot(range(1,max_leaf_size + 1), training_corr, label = 'Training Corr', color = 'blue')
@@ -163,26 +208,75 @@ if __name__ == "__main__":
     plt.title('Leaf Size impact on Correlation', fontsize=16)
     plt.legend(loc=0, fontsize=12)
     plt.tight_layout()
-    plt.savefig('images/leaf_size_impact_on_corr.png')
+    # plt.savefig('images/bagging_leaf_size_impact_on_corr.png')
 
+    # Experiment 3
+    random_dataset_indexes = np.zeros((10, combined_data.shape[0]), dtype=int)
+    combined_random_dataset = np.zeros((10, combined_data.shape[0], combined_data.shape[1]))
 
+    for i in range(10):
+        random_dataset_indexes[i] = np.random.default_rng(i).choice(combined_data.shape[0],combined_data.shape[0])
+        combined_random_dataset[i] = combined_data[random_dataset_indexes[i]]  
 
+    dt_all_time_to_build = np.empty(10, dtype=object)
+    rt_all_time_to_build = np.empty(10, dtype=object)
+    dt_all_r_squared = np.empty(10, dtype=object)
+    rt_all_r_squared = np.empty(10, dtype=object)
+    # Model Training for models up to max leaf size
+    for index, dataset in enumerate(combined_random_dataset):
+        train_rows = int(0.6 * dataset.shape[0])  		  	   		 	   		  		  		    	 		 		   		 		  
+        test_rows = dataset.shape[0] - train_rows  		  	   		 	   		  		  		    	 		 		   		 		  
+                                                                                            
+        # separate out training and testing data  		  	   		 	   		  		  		    	 		 		   		 		  
+        train_x = dataset[:train_rows, 0:-1]  		  	   		 	   		  		  		    	 		 		   		 		  
+        train_y = dataset[:train_rows, -1]  		  	   		 	   		  		  		    	 		 		   		 		  
+        test_x = dataset[train_rows:, 0:-1]  		  	   		 	   		  		  		    	 		 		   		 		  
+        test_y = dataset[train_rows:, -1]  		
 
-  		  	   		 	   		  		  		    	 		 		   		 		  
-    # evaluate in sample  		  	   		 	   		  		  		    	 		 		   		 		  
-    # pred_y = dt_learner.query(train_x)  # get the predictions  		  	   		 	   		  		  		    	 		 		   		 		  
-    		  	   		 	   		  		  		    	 		 		   		 		  
-    # print()  		  	   		 	   		  		  		    	 		 		   		 		  
-    # print("In sample results")  		  	   		 	   		  		  		    	 		 		   		 		  
-    # print(f"RMSE: {rmse}")  		  	   		 	   		  		  		    	 		 		   		 		  
-    # c = np.corrcoef(pred_y, y=train_y)  		  	   		 	   		  		  		    	 		 		   		 		  
-    # print(f"corr: {c[0,1]}")  		  	   		 	   		  		  		    	 		 		   		 		  
-  		  	   		 	   		  		  		    	 		 		   		 		  
-    # # evaluate out of sample  		  	   		 	   		  		  		    	 		 		   		 		  
-    # # pred_y = dt_learner.query(test_x)  # get the predictions  		  	   		 	   		  		  		    	 		 		   		 		  
-    # # rmse = math.sqrt(((test_y - pred_y) ** 2).sum() / test_y.shape[0])  		  	   		 	   		  		  		    	 		 		   		 		  
-    # print()  		  	   		 	   		  		  		    	 		 		   		 		  
-    # print("Out of sample results")  		  	   		 	   		  		  		    	 		 		   		 		  
-    # print(f"RMSE: {rmse}")  		  	   		 	   		  		  		    	 		 		   		 		  
-    # c = np.corrcoef(pred_y, y=test_y)  		  	   		 	   		  		  		    	 		 		   		 		  
-    # print(f"corr: {c[0,1]}")  		  	   		 	   		  		  		    	 		 		   		 		  
+        max_leaf_size = 25
+        dt_learners = np.empty(max_leaf_size, dtype=object)
+        rt_learners = np.empty(max_leaf_size, dtype=object)
+        dt_learners_time_to_build = np.zeros(max_leaf_size)
+        rt_learners_time_to_build = np.zeros(max_leaf_size)
+        dt_test_r_squared = np.zeros(max_leaf_size) 
+        rt_test_r_squared = np.zeros(max_leaf_size)
+
+        for j in range(max_leaf_size):
+            dt_learners[j] = dt.DTLearner(leaf_size=(j+1))
+            start_time = time.time()
+            dt_learners[j].add_evidence(train_x,train_y)
+            end_time = time.time()
+            dt_learners_time_to_build[j] = end_time - start_time
+            
+        
+        for k in range(max_leaf_size):
+            rt_learners[k] = rt.RTLearner(leaf_size=(k+1))
+            start_time = time.time()
+            rt_learners[k].add_evidence(train_x,train_y)
+            end_time = time.time()
+            rt_learners_time_to_build[k] = end_time - start_time
+
+        dt_all_time_to_build[index] = dt_learners_time_to_build
+        rt_all_time_to_build[index] = rt_learners_time_to_build
+        
+
+        for m in range(max_leaf_size):
+            y_pred_test = dt_learners[m].query(test_x)
+            ss_residual = ((test_y - y_pred_test) ** 2).sum()
+            ss_total = ((test_y - test_y.mean()) ** 2).sum()
+            dt_test_r_squared[m] = 1 - (ss_residual / ss_total)
+
+        for n in range(max_leaf_size):
+            y_pred_test = rt_learners[n].query(test_x)
+            ss_residual = ((test_y - y_pred_test) ** 2).sum()
+            ss_total = ((test_y - test_y.mean()) ** 2).sum()
+            rt_test_r_squared[n] = 1 - (ss_residual / ss_total)
+
+        dt_all_r_squared[index] = dt_test_r_squared
+        rt_all_r_squared[index] = rt_test_r_squared
+
+    dt_mean_build_time_all_sims = np.mean(dt_all_time_to_build) 
+    rt_mean_build_time_all_sims = np.mean(rt_all_time_to_build) 
+    dt_mean_r_squared_all_sims = np.mean(dt_all_r_squared) 
+    rt_mean_r_squared_all_sims = np.mean(rt_all_r_squared) 
+    # import pdb; pdb.set_trace()

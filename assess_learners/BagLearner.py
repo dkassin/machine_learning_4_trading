@@ -40,7 +40,7 @@ class BagLearner(object):
         If verbose = False your code should not generate ANY output. When we test your code, verbose will be False.  		  	   		 	   		  		  		    	 		 		   		 		  
     :type verbose: bool  		  	   		 	   		  		  		    	 		 		   		 		  
     """  		  	   		 	   		  		  		    	 		 		   		 		  
-    def __init__(self, learner, kwargs = {"argument1":1, "argument2":2}, bags = 20, boost= False, verbose=False):  		  	   		 	   		  		  		    	 		 		   		 		  
+    def __init__(self, learner, kwargs = {}, bags = 20, boost= False, verbose=False):  		  	   		 	   		  		  		    	 		 		   		 		  
         """  		  	   		 	   		  		  		    	 		 		   		 		  
         Constructor method  		  	   		 	   		  		  		    	 		 		   		 		  
         """
