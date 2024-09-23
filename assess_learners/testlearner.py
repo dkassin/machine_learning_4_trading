@@ -56,19 +56,7 @@ def check_for_headers(data):
     if all(is_numeric(value) for value in first_row_values[1:]):
         return 0
     else:
-       return 1
-
-def compute_correlations(data_x, data_y):
-    correlations = np.zeros(data_x.shape[1])
-    for i in range(data_x.shape[1]):
-        correlations[i] = np.corrcoef(data_x[:, i], data_y)[0, 1]
-    
-    return correlations
-
-def factor_selector(data_x, data_y):
-    correlation_table = compute_correlations(data_x, data_y)
-    max_correlation_index = np.argmax(np.abs(correlation_table))
-    return max_correlation_index
+        return 1
 
 def get_data(arg):
     inf = open(arg)  	
@@ -113,9 +101,6 @@ if __name__ == "__main__":
     train_y = combined_data[:train_rows, -1]  		  	   		 	   		  		  		    	 		 		   		 		  
     test_x = combined_data[train_rows:, 0:-1]  		  	   		 	   		  		  		    	 		 		   		 		  
     test_y = combined_data[train_rows:, -1]  		  	   		 	   		  		  		    	 		 		   		 		     	   		  		  		    	 		 		   		 		  
-    print(f"{test_x.shape}")  		  	   		 	   		  		  		    	 		 		   		 		  
-    print(f"{test_y.shape}")  	
-
 
     # Experiment 1 
 
@@ -126,43 +111,27 @@ if __name__ == "__main__":
     for i in range(max_leaf_size):
         experiment_1_learners[i] = dt.DTLearner(leaf_size=(i+1))
         experiment_1_learners[i].add_evidence(train_x,train_y)
-
-    # import pdb; pdb.set_trace()
     
     training_rmse = np.zeros(max_leaf_size) 
-    training_corr = np.zeros(max_leaf_size)
     
     for i in range(max_leaf_size):
         y_pred_train = experiment_1_learners[i].query(train_x)
         training_rmse[i] = math.sqrt(((train_y - y_pred_train) ** 2).sum() / train_y.shape[0])  
-        training_corr[i] = np.corrcoef(y_pred_train, y=train_y)[0,1]  
 
     testing_rmse = np.zeros(max_leaf_size)
-    testing_corr = np.zeros(max_leaf_size)
     for i in range(max_leaf_size):
         y_pred_test = experiment_1_learners[i].query(test_x)
         testing_rmse[i] = math.sqrt(((test_y - y_pred_test) ** 2).sum() / test_y.shape[0])
-        testing_corr[i] = np.corrcoef(y_pred_test, y=test_y)[0,1]  
 
     plt.figure(figsize=(10,6))
     plt.plot(range(1,max_leaf_size + 1), training_rmse, label = 'Training RMSE', color = 'blue')
     plt.plot(range(1,max_leaf_size + 1), testing_rmse, label = 'Testing RMSE', color = 'green')
     plt.xlabel('Leaf Size', fontsize=14)
     plt.ylabel('RMSE', fontsize=14)
-    plt.title('Leaf Size impact on RMSE', fontsize=16)
+    plt.title('RMSE With Respect to Leaf Size', fontsize=16)
     plt.legend(loc=0, fontsize=12)
     plt.tight_layout()
-    # plt.savefig('images/leaf_size_impact_on_rmse.png')
-
-    plt.figure(figsize=(10,6))
-    plt.plot(range(1,max_leaf_size + 1), training_corr, label = 'Training Corr', color = 'blue')
-    plt.plot(range(1,max_leaf_size + 1), testing_corr, label = 'Testing Corr', color = 'green')
-    plt.xlabel('Leaf Size', fontsize=14)
-    plt.ylabel('Correlation', fontsize=14)
-    plt.title('Leaf Size impact on Correlation', fontsize=16)
-    plt.legend(loc=0, fontsize=12)
-    plt.tight_layout()
-    # plt.savefig('images/leaf_size_impact_on_corr.png')
+    plt.savefig('images/rmse_with_respect_to_leaf_size.png')
 
     # Experiment 2 
 
@@ -174,41 +143,26 @@ if __name__ == "__main__":
         experiment_2_learners[i].add_evidence(train_x, train_y)
 
     training_rmse = np.zeros(max_leaf_size) 
-    training_corr = np.zeros(max_leaf_size)
     
     for i in range(max_leaf_size):
         y_pred_train = experiment_2_learners[i].query(train_x)
         training_rmse[i] = math.sqrt(((train_y - y_pred_train) ** 2).sum() / train_y.shape[0])  
-        training_corr[i] = np.corrcoef(y_pred_train, y=train_y)[0,1]  
 
     testing_rmse = np.zeros(max_leaf_size)
-    testing_corr = np.zeros(max_leaf_size)
     for i in range(max_leaf_size):
         y_pred_test = experiment_2_learners[i].query(test_x)
         testing_rmse[i] = math.sqrt(((test_y - y_pred_test) ** 2).sum() / test_y.shape[0])
-        testing_corr[i] = np.corrcoef(y_pred_test, y=test_y)[0,1]  
 
-    # import pdb; pdb.set_trace()
 
     plt.figure(figsize=(10,6))
     plt.plot(range(1,max_leaf_size + 1), training_rmse, label = 'Training RMSE', color = 'blue')
     plt.plot(range(1,max_leaf_size + 1), testing_rmse, label = 'Testing RMSE', color = 'green')
     plt.xlabel('Leaf Size', fontsize=14)
     plt.ylabel('RMSE', fontsize=14)
-    plt.title('Leaf Size impact on RMSE', fontsize=16)
+    plt.title('RMSE With Respect to Leaf Size with Bagging', fontsize=16)
     plt.legend(loc=0, fontsize=12)
     plt.tight_layout()
-    # plt.savefig('images/bagging_leaf_size_impact_on_rmse.png')
-
-    plt.figure(figsize=(10,6))
-    plt.plot(range(1,max_leaf_size + 1), training_corr, label = 'Training Corr', color = 'blue')
-    plt.plot(range(1,max_leaf_size + 1), testing_corr, label = 'Testing Corr', color = 'green')
-    plt.xlabel('Leaf Size', fontsize=14)
-    plt.ylabel('Correlation', fontsize=14)
-    plt.title('Leaf Size impact on Correlation', fontsize=16)
-    plt.legend(loc=0, fontsize=12)
-    plt.tight_layout()
-    # plt.savefig('images/bagging_leaf_size_impact_on_corr.png')
+    plt.savefig('images/rmse_with_respect_to_leaf_size_with_bagging.png')
 
     # Experiment 3
     random_dataset_indexes = np.zeros((10, combined_data.shape[0]), dtype=int)
@@ -279,4 +233,23 @@ if __name__ == "__main__":
     rt_mean_build_time_all_sims = np.mean(rt_all_time_to_build) 
     dt_mean_r_squared_all_sims = np.mean(dt_all_r_squared) 
     rt_mean_r_squared_all_sims = np.mean(rt_all_r_squared) 
-    # import pdb; pdb.set_trace()
+    
+    plt.figure(figsize=(10,6))
+    plt.plot(range(1,max_leaf_size + 1), dt_mean_build_time_all_sims, label = 'Decision Tree', color = 'blue')
+    plt.plot(range(1,max_leaf_size + 1), rt_mean_build_time_all_sims, label = 'Random Tree', color = 'green')
+    plt.xlabel('Leaf Size', fontsize=14)
+    plt.ylabel('Build Time', fontsize=14)
+    plt.title('Time To Build With Respect To Leaf Size', fontsize=16)
+    plt.legend(loc=0, fontsize=12)
+    plt.tight_layout()
+    plt.savefig('images/time_to_build_with_respect_to_leaf_size.png')
+
+    plt.figure(figsize=(10,6))
+    plt.plot(range(1,max_leaf_size + 1), dt_mean_r_squared_all_sims, label = 'Decision Tree', color = 'blue')
+    plt.plot(range(1,max_leaf_size + 1), rt_mean_r_squared_all_sims, label = 'Random Tree', color = 'green')
+    plt.xlabel('Leaf Size', fontsize=14)
+    plt.ylabel('R Squared', fontsize=14)
+    plt.title('R Sqaured With Respect To Leaf Size', fontsize=16)
+    plt.legend(loc=0, fontsize=12)
+    plt.tight_layout()
+    plt.savefig('images/r_squared_with_respect_to_leaf_size.png')
