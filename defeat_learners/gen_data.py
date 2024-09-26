@@ -44,13 +44,9 @@ def best_4_lin_reg(seed=904063414):
     :rtype: numpy.ndarray  		  	   		 	   		  		  		    	 		 		   		 		  
     """  		  	   		 	   		  		  		    	 		 		   		 		  
     np.random.seed(seed)  		  	   		 	   		  		  		    	 		 		   		 		  
-    # x = np.zeros((100, 2))  		  	   		 	   		  		  		    	 		 		   		 		  
-    # y = np.random.random(size=(100,)) * 200 - 100  
     x = np.random.random(size=(100,4)) * 3
     y = x[:,0] + (x[:,1] -2) + x[:,2] * 2 + (x[:,3] + 18)  		  	
-    # import pdb; pdb.set_trace()		  	   		 	   		  		  		    	 		 		   		 		  
-    # Here's is an example of creating a Y from randomly generated  		  	   		 	   		  		  		    	 		 		   		 		  
-    # X with multiple columns  		  	   		 	   		  		  		    	 		 		   		 		  
+	  	   		 	   		  		  		    	 		 		   		 		  
        		 	   		  		  		    	 		 		   		 		  
     return x, y  		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
