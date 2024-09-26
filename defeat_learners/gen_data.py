@@ -65,7 +65,7 @@ def best_4_dt(seed=904063414):
     np.random.seed(seed)  		  	   		 	   		  		  		    	 		 		   		 		  
 
     x = np.random.random(size=(100,4))
-    y = x[:,0] ** 3 + np.log(x[:,1])
+    y = x[:,0] ** 2 + np.log(x[:,1])
     return x, y  		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
