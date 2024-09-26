@@ -33,12 +33,11 @@ import numpy as np
 		  	   		 	   		  		  		    	 		 		   			  	   		 	   		  		  		    	 		 		   		 		  
 # this function should return a dataset (X and Y) that will work  		  	   		 	   		  		  		    	 		 		   		 		  
 # better for linear regression than decision trees  		  	   		 	   		  		  		    	 		 		   		 		  
-def best_4_lin_reg(seed=1489683273):  		  	   		 	   		  		  		    	 		 		   		 		  
+def best_4_lin_reg(seed=904063414):  		  	   		 	   		  		  		    	 		 		   		 		  
     """  		  	   		 	   		  		  		    	 		 		   		 		  
     Returns data that performs significantly better with LinRegLearner than DTLearner.  		  	   		 	   		  		  		    	 		 		   		 		  
     The data set should include from 2 to 10 columns in X, and one column in Y.  		  	   		 	   		  		  		    	 		 		   		 		  
     The data should contain from 10 (minimum) to 1000 (maximum) rows.  		  	   		 	   		  		  		    	 		 		   		 		  
-  		  	   		 	   		  		  		    	 		 		   		 		  
     :param seed: The random seed for your data generation.  		  	   		 	   		  		  		    	 		 		   		 		  
     :type seed: int  		  	   		 	   		  		  		    	 		 		   		 		  
     :return: Returns data that performs significantly better with LinRegLearner than DTLearner.  		  	   		 	   		  		  		    	 		 		   		 		  
@@ -56,7 +55,7 @@ def best_4_lin_reg(seed=1489683273):
     return x, y  		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
-def best_4_dt(seed=1489683273):  		  	   		 	   		  		  		    	 		 		   		 		  
+def best_4_dt(seed=904063414):  		  	   		 	   		  		  		    	 		 		   		 		  
     """  		  	   		 	   		  		  		    	 		 		   		 		  
     Returns data that performs significantly better with DTLearner than LinRegLearner.  		  	   		 	   		  		  		    	 		 		   		 		  
     The data set should include from 2 to 10 columns in X, and one column in Y.  		  	   		 	   		  		  		    	 		 		   		 		  
@@ -70,7 +69,7 @@ def best_4_dt(seed=1489683273):
     np.random.seed(seed)  		  	   		 	   		  		  		    	 		 		   		 		  
 
     x = np.random.random(size=(100,4))
-    y = x[:,0] ** 3
+    y = x[:,0] ** 3 + np.log(x[:,1])
     return x, y  		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
