@@ -1,0 +1,114 @@
+<pre>--- Summary ---
+Tests passed: 1 out of 13
+
+--- Details ---
+Test #0: failed 
+Test case description: Orders 1
+Traceback:
+  File "marketsim.py", line 74, in compute_portvals
+    start_date = dt.datetime(2008, 1, 1)
+  File "marketsim.py", line 74, in compute_portvals
+    start_date = dt.datetime(2008, 1, 1)
+BdbQuit: 
+
+Test #1: failed 
+Test case description: Orders 2
+Traceback:
+  File "marketsim.py", line 74, in compute_portvals
+    start_date = dt.datetime(2008, 1, 1)
+  File "marketsim.py", line 74, in compute_portvals
+    start_date = dt.datetime(2008, 1, 1)
+BdbQuit: 
+
+Test #2: failed 
+Test case description: Orders 3
+Traceback:
+  File "marketsim.py", line 74, in compute_portvals
+    start_date = dt.datetime(2008, 1, 1)
+  File "marketsim.py", line 74, in compute_portvals
+    start_date = dt.datetime(2008, 1, 1)
+BdbQuit: 
+
+Test #3: failed 
+Test case description: Orders 4
+Traceback:
+  File "marketsim.py", line 74, in compute_portvals
+    start_date = dt.datetime(2008, 1, 1)
+  File "marketsim.py", line 74, in compute_portvals
+    start_date = dt.datetime(2008, 1, 1)
+BdbQuit: 
+
+Test #4: failed 
+Test case description: Orders 5
+Traceback:
+  File "marketsim.py", line 74, in compute_portvals
+    start_date = dt.datetime(2008, 1, 1)
+  File "marketsim.py", line 74, in compute_portvals
+    start_date = dt.datetime(2008, 1, 1)
+BdbQuit: 
+
+Test #5: failed 
+Test case description: Orders 6
+Traceback:
+  File "marketsim.py", line 74, in compute_portvals
+    start_date = dt.datetime(2008, 1, 1)
+  File "marketsim.py", line 74, in compute_portvals
+    start_date = dt.datetime(2008, 1, 1)
+BdbQuit: 
+
+Test #6: failed 
+Test case description: Orders 7
+Traceback:
+  File "marketsim.py", line 74, in compute_portvals
+    start_date = dt.datetime(2008, 1, 1)
+  File "marketsim.py", line 74, in compute_portvals
+    start_date = dt.datetime(2008, 1, 1)
+BdbQuit: 
+
+Test #7: failed 
+Test case description: Orders 8
+Traceback:
+  File "marketsim.py", line 74, in compute_portvals
+    start_date = dt.datetime(2008, 1, 1)
+  File "marketsim.py", line 74, in compute_portvals
+    start_date = dt.datetime(2008, 1, 1)
+BdbQuit: 
+
+Test #8: failed 
+Test case description: Orders 9
+Traceback:
+  File "marketsim.py", line 74, in compute_portvals
+    start_date = dt.datetime(2008, 1, 1)
+  File "marketsim.py", line 74, in compute_portvals
+    start_date = dt.datetime(2008, 1, 1)
+BdbQuit: 
+
+Test #9: failed 
+Test case description: Orders 11, commission
+Traceback:
+  File "marketsim.py", line 74, in compute_portvals
+    start_date = dt.datetime(2008, 1, 1)
+  File "marketsim.py", line 74, in compute_portvals
+    start_date = dt.datetime(2008, 1, 1)
+BdbQuit: 
+
+Test #10: failed 
+Test case description: Orders 12, impact
+Traceback:
+  File "marketsim.py", line 74, in compute_portvals
+    start_date = dt.datetime(2008, 1, 1)
+  File "marketsim.py", line 74, in compute_portvals
+    start_date = dt.datetime(2008, 1, 1)
+BdbQuit: 
+
+Test #11: failed 
+Test case description: Orders 10, impact and commission
+Traceback:
+  File "marketsim.py", line 74, in compute_portvals
+    start_date = dt.datetime(2008, 1, 1)
+  File "marketsim.py", line 74, in compute_portvals
+    start_date = dt.datetime(2008, 1, 1)
+BdbQuit: 
+
+Test #12: passed 
+</pre>
