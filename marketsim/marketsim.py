@@ -76,14 +76,17 @@ def compute_portvals(
     dates = pd.date_range(start_date, end_date)
     prices_all = get_data(syms, dates)  	
     prices = prices_all[syms]	
-    prices["Cash"] = 1	  
-    trades = pd.DataFrame(data=0.0, columns = prices.columns, index=prices.index) 		  		  		    	 		 		   		 		  
+    prices["Cash"] = 1.0	  
+    trades = pd.DataFrame(data=0.0, columns = prices.columns, index=prices.index)
+    holdings = pd.DataFrame(data=0.0, columns = prices.columns, index=prices.index) 		  		  		    	 		 		   		 		  
     
     for date, row in orders_df.iterrows():
-        new_trade_value = (1 if row['Order'].lower() == 'buy' else -1) * int(row['Shares'])
-        trades.loc[date, row['Symbol']] = new_trade_value
-
-    holdings = pd.DataFrame(data=0.0, columns = prices.columns, index=prices.index)
+        direction = 1 if row['Order'].lower() == 'buy' else -1
+        new_share_value = direction * int(row['Shares'])
+        trades.loc[date, row['Symbol']] += new_share_value
+        initial_cash_value = new_share_value * prices.loc[date, row['Symbol']] * (-1)
+        market_adjustment_cost = abs(initial_cash_value) * impact
+        trades.loc[date, 'Cash'] += (initial_cash_value - commission - market_adjustment_cost)
 
     for date in trades.index:
         if date == trades.index[0]:
@@ -93,25 +96,30 @@ def compute_portvals(
             previous_day = trades.index[current_idx-1]
             holdings.loc[date] = holdings.loc[previous_day] + trades.loc[date]
 
-    # trades['Cash'] = (trades * prices).sum(axis=1)
-    # holdings['Cash'][0] = float(start_val)
-    # holdings['Cash'] = (holdings * prices).sum(axis=1) - (trades 
-    # holdings['Cash'][0] += float(start_val) + trades['Cash'][0]
-    # holdings['Cash'][1:] = holdings['Cash'].iloc[0] + trades['Cash'][1:].cumsum()
+    holdings['Cash'][0] = float(start_val) + trades['Cash'][0]
+    
+    for i in range(1, len(holdings)):
+        current_date = holdings.index[i]
+        previous_date = holdings.index[i -1]
+        holdings.loc[current_date, 'Cash'] = holdings.loc[previous_date, 'Cash'] + trades.loc[current_date, 'Cash']
 
-    import pdb; pdb.set_trace()
+    port_values = (prices * holdings).sum(axis=1)
+    
+    return port_values
+    
+    
     
 
     # In the template, instead of computing the value of the portfolio, we just  		  	   		 	   		  		  		    	 		 		   		 		  
     # read in the value of IBM over 6 months  		  	   		 	   		  		  		    	 		 		   		 		  
-    start_date = dt.datetime(2008, 1, 1)  		  	   		 	   		  		  		    	 		 		   		 		  
-    end_date = dt.datetime(2008, 6, 1)  		  	   		 	   		  		  		    	 		 		   		 		  
-    portvals = get_data(["IBM"], pd.date_range(start_date, end_date))  		  	   		 	   		  		  		    	 		 		   		 		  
-    portvals = portvals[["IBM"]]  # remove SPY  		  	   		 	   		  		  		    	 		 		   		 		  
-    rv = pd.DataFrame(index=portvals.index, data=portvals.values)  		  	   		 	   		  		  		    	 		 		   		 		  
+    # start_date = dt.datetime(2008, 1, 1)  		  	   		 	   		  		  		    	 		 		   		 		  
+    # end_date = dt.datetime(2008, 6, 1)  		  	   		 	   		  		  		    	 		 		   		 		  
+    # portvals = get_data(["IBM"], pd.date_range(start_date, end_date))  		  	   		 	   		  		  		    	 		 		   		 		  
+    # portvals = portvals[["IBM"]]  # remove SPY  		  	   		 	   		  		  		    	 		 		   		 		  
+    # rv = pd.DataFrame(index=portvals.index, data=portvals.values)  		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
-    return rv  		  	   		 	   		  		  		    	 		 		   		 		  
-    return portvals  		  	   		 	   		  		  		    	 		 		   		 		  
+    # return rv  		  	   		 	   		  		  		    	 		 		   		 		  
+    # return portvals  		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
 def test_code():  		  	   		 	   		  		  		    	 		 		   		 		  
