@@ -12,7 +12,6 @@ def author():
 
 def testPolicy(symbol='JPM', sd=dt.datetime(2010, 1, 1), ed=dt.datetime(2011,12,31), sv = 100000):
         prices = get_data([symbol], pd.date_range(sd, ed), False).dropna()
-
         prices['future_returns'] = prices.diff().shift(-1)
         prices['signals'] = np.where(prices['future_returns'] > 0, 1, np.where(prices['future_returns'] < 0, -1, 0))
         df_trades = pd.DataFrame(data=0.0, columns=["Trades"], index=prices.index)
