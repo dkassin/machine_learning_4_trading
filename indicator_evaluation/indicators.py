@@ -1,5 +1,8 @@
 import pandas as pd
 import numpy as np
+import datetime as dt
+from util import get_data
+import matplotlib.pyplot as plt
 
 class Indicators(object):
     def __init__(self):  	
@@ -11,52 +14,77 @@ class Indicators(object):
         :rtype: str  		  	   		 	   		  		  		    	 		 		   		 		  
         """  		  	   		 	   		  		  		    	 		 		   		 		  
         return "dkassin3"
+    
+    def create_all_indicator_charts(self, symbols = ['JPM'], start_date = dt.datetime(2008, 1, 1), end_date = dt.datetime(2009, 12, 31)):
+        prices = get_data(symbols, pd.date_range(start_date, end_date), addSPY=False).dropna(axis=0)
+        self.create_charts(self.golden_death_cross(prices), title="Golden Death Cross Technical Indicator", xlabel="Date", ylabel="Golden Death Cross")
+        import pdb; pdb.set_trace()
+        self.create_charts(self.binary_bollinger_bands(prices), title="Binary Bollinger Bands Technical Indicator", xlabel="Date", ylabel="Binary Bollinger Bands")
+        self.create_charts(self.normalized_momentum_indicator(prices), title="Normalized Momentum Indicator Technical Indicator", xlabel="Date", ylabel="Normalized Momentum Indicator")
+        self.create_charts(self.ema(prices), title="EMA Technical Indicator", xlabel="Date", ylabel="EMA")
+        self.create_charts(self.stochastic_oscillator(prices), title="Stochastic Oscillator Technical Indicator", xlabel="Date", ylabel="Stochastic Oscillator")
+
+
+    def create_charts(self, df, title="Stock prices", xlabel="Date", ylabel="Price"):  		  	   		 	   		  		  		    	 		 		   		 		  
+        ax = df.plot(title=title, fontsize=12)  		  	   		 	   		  		  		    	 		 		   		 		  
+        ax.set_xlabel(xlabel)  		  	   		 	   		  		  		    	 		 		   		 		  
+        ax.set_ylabel(ylabel)
+        plt.savefig('images/f"{title}.png')
+        plt.close()
 
     def golden_death_cross(self, data, short_window=20, long_window=50):
-        golden_death_cross = data.copy()
+        df = data.copy()
         short_col_name = f"sma_{short_window}_window"
         long_col_name = f"sma_{long_window}_window"
-        golden_death_cross[short_col_name] = golden_death_cross.rolling(window=short_window).mean()
-        golden_death_cross[long_col_name] = golden_death_cross.rolling(window=long_window).mean()
-        golden_death_cross['golden_cross_signal'] = (golden_death_cross["sma_20_window"] > golden_death_cross["sma_20_window"]).astype(int)
-        return golden_death_cross
+        df[short_col_name] = df.rolling(window=short_window).mean()
+        df[long_col_name] = df.rolling(window=long_window).mean()
+        df['signal'] = (df["sma_20_window"] > df["sma_20_window"]).astype(int)
+        import pdb; pdb.set_trace()
+        return df[['signal']]
         
     def binary_bollinger_bands(self, data, lookback=14):
-        bollinger_bands_data = data.copy()
-        sma = bollinger_bands_data.rolling(window=lookback, min_periods=lookback).mean()
-        rolling_std = bollinger_bands_data.rolling(window=lookback, min_periods=lookback).mean()
+        df = data.copy()
+        sma = df.rolling(window=lookback, min_periods=lookback).mean()
+        rolling_std = df.rolling(window=lookback, min_periods=lookback).mean()
         top_band = sma + (2 * rolling_std)
         bottom_band = sma - (2 * rolling_std)
-        bbp = (bollinger_bands_data - bottom_band) / (top_band - bottom_band)
+        bbp = (df - bottom_band) / (top_band - bottom_band)
         buy_signal = (bbp.shift(1) < 0) & (bbp >= 0)
         sell_signal = (bbp.shift(1) > 1) & (bbp <= 1)
 
-        signals = np.where(buy_signal, 1, np.where(sell_signal, -1 ,0))
-        return signals
+        df['signals'] = np.where(buy_signal, 1, np.where(sell_signal, -1 ,0))
+        return df['signals']
     
     def normalized_momentum_indicator(self, data, lookback=14):
-        momentum_data = data.copy()
-        momentum = (momentum_data / momentum_data.shift(lookback)) - 1
+        df = data.copy()
+        momentum = (df / df.shift(lookback)) - 1
         min_momentum = momentum.min(skipna=True)
         max_momentum = momentum.max(skipna=True)
         if min_momentum == max_momentum:
             return np.zeros_like(momentum.values)
-        normalized_momentum = 2 * (momentum - min_momentum) / (max_momentum - min_momentum) - 1
-        return normalized_momentum.values
+        else:
+            normalized_momentum = 2 * (momentum - min_momentum) / (max_momentum - min_momentum) - 1
+        df['momentum'] = normalized_momentum
+        return df[['momentum']]
 
     def ema(self, data, lookback=14):
-        ema_data = data.copy()
-        ema_values = ema_data.ewm(span=lookback, adjust=False).mean()
-        return ema_values.to_numpy()
+        df = data.copy()
+        df['ema'] = df.ewm(span=lookback, adjust=False).mean()
+        return df[['ema']]
     
     def stochastic_oscillator(self, data, lookback=14):
-        stochastic_data = data.copy()
-        high = stochastic_data.rolling(window=lookback).max()
-        low = stochastic_data.rolling(window=lookback).min()
+        df = data.copy()
+        high = df.rolling(window=lookback).max()
+        low = df.rolling(window=lookback).min()
         percent_k = 100 * (data - low) / (high - low)
         percent_k = percent_k.fillna(0)
-        return percent_k.to_numpy()
-
+        df['percent_k'] = percent_k
+        return df[['percent_k']]
+    
+def main():
+    indicators = Indicators()
+    indicators.create_all_indicator_charts()
 
 if __name__ == "__main__":  		  	   		 	   		  		  		    	 		 		   		 		  
     print("the secret clue is 'zzyzx'")  	
+    main()
