@@ -35,13 +35,27 @@ class Indicators(object):
         return signals
     
     def normalized_momentum_indicator(self, data, lookback=14):
-        momentum = (data / data.shift(lookback)) - 1
+        momentum_data = data.copy()
+        momentum = (momentum_data / momentum_data.shift(lookback)) - 1
         min_momentum = momentum.min(skipna=True)
         max_momentum = momentum.max(skipna=True)
         if min_momentum == max_momentum:
             return np.zeros_like(momentum.values)
         normalized_momentum = 2 * (momentum - min_momentum) / (max_momentum - min_momentum) - 1
         return normalized_momentum.values
+
+    def ema(self, data, lookback=14):
+        ema_data = data.copy()
+        ema_values = ema_data.ewm(span=lookback, adjust=False).mean()
+        return ema_values.to_numpy()
+    
+    def stochastic_oscillator(self, data, lookback=14):
+        stochastic_data = data.copy()
+        high = stochastic_data.rolling(window=lookback).max()
+        low = stochastic_data.rolling(window=lookback).min()
+        percent_k = 100 * (data - low) / (high - low)
+        percent_k = percent_k.fillna(0)
+        return percent_k.to_numpy()
 
 
 if __name__ == "__main__":  		  	   		 	   		  		  		    	 		 		   		 		  
