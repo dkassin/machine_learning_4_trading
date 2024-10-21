@@ -46,5 +46,4 @@ def testPolicy(symbol='JPM', sd=dt.datetime(2010, 1, 1), ed=dt.datetime(2011,12,
         return df_trades
 
 if __name__ == "__main__":  
-        trades = testPolicy()
         

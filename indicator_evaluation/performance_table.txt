@@ -1,0 +1,4 @@
+                Metric  Benchmark  Portfolio
+     Cumulative Return   0.010600   5.784400
+Stdev of Daily Returns   0.017038   0.004551
+ Mean of Daily Returns   0.000165   0.003831

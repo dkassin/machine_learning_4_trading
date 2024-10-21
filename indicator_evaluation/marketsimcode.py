@@ -44,10 +44,10 @@ def study_group():
   		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
 def compute_portvals(  		  	   		 	   		  		  		    	 		 		   		 		  
-    orders_file="./orders/orders.csv",  		  	   		 	   		  		  		    	 		 		   		 		  
-    start_val=1000000,  		  	   		 	   		  		  		    	 		 		   		 		  
-    commission=9.95,  		  	   		 	   		  		  		    	 		 		   		 		  
-    impact=0.005,  		  	   		 	   		  		  		    	 		 		   		 		  
+    orders,  		  	   		 	   		  		  		    	 		 		   		 		  
+    start_val=100000,  		  	   		 	   		  		  		    	 		 		   		 		  
+    commission=0,  		  	   		 	   		  		  		    	 		 		   		 		  
+    impact=0,  		  	   		 	   		  		  		    	 		 		   		 		  
 ):  		  	   		 	   		  		  		    	 		 		   		 		  
     """  		  	   		 	   		  		  		    	 		 		   		 		  
     Computes the portfolio values.  		  	   		 	   		  		  		    	 		 		   		 		  
@@ -68,7 +68,7 @@ def compute_portvals(
     # code should work correctly with either input  		  	   		 	   		  		  		    	 		 		   		 		  
     # TODO: Your code here  		  
 
-    orders_df = pd.read_csv(orders_file, index_col='Date', parse_dates=True, na_values=['nan']) 
+    orders_df = orders 
     syms = orders_df['Symbol'].unique().tolist()      
     start_date,end_date = orders_df.index.min(), orders_df.index.max()
     dates = pd.date_range(start_date, end_date)
